@@ -13,7 +13,9 @@ inside the real device's published limits — validated on Pasqal Cloud.
 | **Ours, per-spacing** | **0.999895** | **0.999435** | [REPORT.md](ch01/REPORT.md) |
 | **Ours, one robust waveform** | **0.999443** | **0.997008** | [fig_robustness.png](ch01/fig_robustness.png) |
 | **Ours, time-optimal (224 / 420 ns — 6–11× shorter)** | **0.999999** | **0.999998** | [docs/06-time-optimal.md](docs/06-time-optimal.md) |
+| **Ours, hardware-true smooth (v3, FRESNEL envelope)** | **1.000000** | **1.000000** | [docs/07-hardware.md](docs/07-hardware.md) |
 | Cloud validation (500 shots ea.) | ✅ | ✅ | [cloud_results](ch01/cloud_results_EMU_FREE.json) |
+| **Real QPU run (FRESNEL_CAN1, 500 shots)** | submitted — [batch](ch01/qpu_batch.json) | n/a (lattice can't form 6.5 µm) | [docs/07-hardware.md §4](docs/07-hardware.md) |
 
 ![Results](ch01/ch01_results.png)
 
@@ -58,6 +60,15 @@ we push to the quantum speed limit: **F = 0.999999 at 224 ns (r₁) and 420 ns
 (r₂)** — 6–11× shorter than step 5, near the theoretical bound T = π/(√2·Ω_max)
 = 177 ns. *→ [docs/06-time-optimal.md](docs/06-time-optimal.md), frontier:
 [fig_time_frontier.png](ch01/fig_time_frontier.png)*
+
+**7 · Then make it real.** Under a Lindblad noise model (Rydberg decay + laser
+dephasing) the ranking flips: slow pulses collapse to F ≈ 0.73, short ones keep
+0.93–0.97 — duration *is* the noise coupling. We re-optimized under the real
+FRESNEL envelope with slew-limited smooth shapes (the scientist's "don't shoot
+up"), and sent the winner to the **actual quantum computer** — 500 shots on
+FRESNEL_CAN1, two atoms on the calibrated lattice.
+*→ [docs/07-hardware.md](docs/07-hardware.md); independent Julia/Piccolo
+cross-validation in [piccolo-solutions/](piccolo-solutions/)*
 
 ---
 
