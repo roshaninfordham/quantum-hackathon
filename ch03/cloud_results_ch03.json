@@ -1,0 +1,11 @@
+{
+ "N11": {
+  "batch_id": "d4aae9a5-e20a-405e-b68e-18b3670887bf",
+  "note": "EMU_FREE caps at 12 atoms; N=13+ not possible on free tier",
+  "shots": 500,
+  "valid_fraction": 0.498,
+  "r_valid": 0.8975903614457831,
+  "r_repair": 0.8725,
+  "P_MIS": 0.306
+ }
+}

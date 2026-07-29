@@ -42,10 +42,17 @@ N = 11 instance only and transferred unchanged to N = 13 and 17.
 
 ## Hardware-facing validation
 
-- Cloud (EMU_FREE, 500 shots — the paper's shot count): `cloud_results_ch03.json`
-- Real QPU (FRESNEL_CAN1, N = 10 lattice-native instance, 500 shots):
-  `qpu_ch03_results.json`. The calibrated layout is triangular, so the QPU
-  instance is a triangular unit-disk graph, not a DUGG — stated, not hidden.
+- **Cloud, N = 11, 500 shots (the paper's shot count), measured:**
+  r_valid = **0.8976**, valid fraction 49.8%, P_MIS = 0.306 — matching the
+  simulation prediction (0.903 / 50% / 0.313) within shot noise, and at
+  near-parity with the paper's hardware 0.907. Batch
+  `d4aae9a5…` in `cloud_results_ch03.json`.
+- N = 13 on the cloud is **not possible**: EMU_FREE caps at 12 atoms
+  (discovered at submission; paid tiers were out of scope).
+- Real QPU (FRESNEL_CAN1, N = 10 lattice-native instance, α = 4, 500
+  shots): batch `11553903…`, results land in `qpu_ch03_results.json`.
+  The calibrated layout is triangular, so the QPU instance is a
+  triangular unit-disk graph, not a DUGG — stated, not hidden.
 
 ## The verification incident (kept on purpose)
 
