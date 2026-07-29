@@ -88,8 +88,14 @@ def main() -> None:
         print(f"[{name}] pops={ {k: round(v, 4) for k, v in pops.items()} }", flush=True)
 
     out = f"cloud_results_{target}.json"
-    json.dump(results, open(out, "w"), indent=1)
-    print(f"wrote {out}")
+    merged = {}
+    try:
+        merged = json.load(open(out))
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+    merged.update(results)
+    json.dump(merged, open(out, "w"), indent=1)
+    print(f"wrote {out} ({len(merged)} pulses recorded)")
 
 
 if __name__ == "__main__":
