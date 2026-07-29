@@ -54,7 +54,13 @@ def main():
         evals[0] += 1
         if not (0 < p[0] <= 12.566):
             return 1.0
-        return 1.0 - evaluate(list(p), "11")["r_repair"]
+        amp, det = s3.crab_knots(list(p), T_OPT)
+        if np.abs(det).max() > 125.66:          # device envelope, hard wall
+            return 1.0
+        m = evaluate(list(p), "11")
+        # optimize repaired ratio but demand real validity too — the
+        # metric the paper reports is valid-only.
+        return 1.0 - 0.5 * (m["r_repair"] + m["r_valid"] * m["valid_fraction"] ** 0.25)
 
     rng = np.random.default_rng(2)
     x0 = np.array([2 * np.pi * 1.0, -12.57, 4.0, 0.0, 0.0])   # d_f INSIDE the window

@@ -126,7 +126,9 @@ def metrics(psi, n, edges, alpha):
     for idx, p in enumerate(probs):
         if p < 1e-12:
             continue
-        bits = [((2 ** n - 1 - idx) >> (n - 1 - q)) & 1 for q in range(n)]
+        # OUR basis: index bit IS the excitation (state built that way in
+        # operators()); no pulser flip here. Verified by selftest().
+        bits = [(idx >> (n - 1 - q)) & 1 for q in range(n)]
         s = [i for i, b in enumerate(bits) if b]
         indep = not any(tuple(sorted(pr)) in edge_set
                         for pr in itertools.combinations(s, 2))
@@ -164,7 +166,26 @@ def crab_knots(params, t_ns):
     return amp, det
 
 
+def selftest():
+    """Convention checks — added after the first run of the optimizer
+    exploited a basis-flip bug in metrics() (r_repair=1.0 at valid=0.0)."""
+    coords = [(0.0, 0.0), (5.0, 0.0), (20.0, 0.0)]
+    edges = [(0, 1)]
+    hx, hd, hint = operators(coords, edges)
+    # (a) zero pulse: stays all-OFF -> empty set: valid, size 0.
+    psi = propagate(np.zeros(4), np.zeros(4), hx, hd, hint)
+    m = metrics(psi, 3, edges, alpha_of(3, edges))
+    assert m["valid_fraction"] > 0.999 and m["r_valid"] < 1e-6, m
+    # (b) strong resonant drive on the far atom trio must generate SOME
+    # excitation weight and never crash repair.
+    psi = propagate(np.full(60, 6.28), np.zeros(60), hx, hd, hint)
+    m = metrics(psi, 3, edges, alpha_of(3, edges))
+    assert 0.0 < m["r_repair"] <= 1.0, m
+    print("selftest OK")
+
+
 if __name__ == "__main__":
+    selftest()
     inst = {}
     for n, shape, seed in [(11, (4, 4), 3), (13, (4, 5), 7), (17, (5, 5), 5)]:
         coords, edges = make_dugg(n, shape, seed)
