@@ -1,19 +1,16 @@
-#!/usr/bin/env julia
-# Challenge 02 — MIS via optimal control (Piccolo)
-# Shape Ω(t) and Δ(t) to maximize P_MIS population on embedded graphs.
-# Uses the same apparatus as Ch01: QuantumSystem + KetTrajectory + Ipopt.
+# Ch02 — MIS via Piccolo optimal control
+# Star K₁₃ (4 atoms, unique MIS) and Cycle C₅ (5 atoms, degenerate MIS).
+# ZeroOrderPulse + SmoothPulseProblem + L-BFGS (limited-memory Hessian).
 
 using Piccolo
-using LinearAlgebra, JLD2, Printf, Random
-Random.seed!(42)
+using LinearAlgebra, JLD2, Printf
 
-const C6    = 865_723.0e-3        # rad/ns · µm⁶
-const Ω_MAX = 0.012566370614359172 # rad/ns (12.57 rad/µs)
-const Δ_MAX = 0.12566370614359172  # rad/ns (125.7 rad/µs)
+const C6    = 865_723.0e-3
+const O_MAX = 0.012566370614359172
+const D_MAX = 0.12566370614359172
 
-# 2-level atom: |g⟩ (=|0⟩), |r⟩ (=Rydberg)
-σx = ComplexF64[0 1; 1 0]    # |g⟩⟨r| + |r⟩⟨g|
-n  = ComplexF64[0 0; 0 1]    # |r⟩⟨r|
+σx = ComplexF64[0 1; 1 0]
+n  = ComplexF64[0 0; 0 1]
 I2 = ComplexF64[1 0; 0 1]
 
 function embed(op, i, N)
@@ -21,22 +18,21 @@ function embed(op, i, N)
     return foldl(kron, ops)
 end
 
-function build_mis_system(positions)
+function build_system(positions)
     N = size(positions, 2)
-    H_Ω  = sum(embed(σx, i, N) for i in 1:N) / 2
-    H_Δ  = sum(embed(n,  i, N) for i in 1:N)
+    H_O  = sum(embed(σx, i, N) for i in 1:N) / 2
+    H_D  = sum(embed(n,  i, N) for i in 1:N)
     H_int = zeros(ComplexF64, 2^N, 2^N)
     for i in 1:N, j in (i+1):N
         r = sqrt(sum((positions[:,i] - positions[:,j]).^2))
         H_int += (C6 / r^6) * embed(n, i, N) * embed(n, j, N)
     end
-    return H_int, H_Ω, H_Δ
+    return H_int, H_O, H_D
 end
 
-# ── MIS target state ───────────────────────────────────────────────────
-function mis_subspace_indices(positions)
+function find_mis(positions)
     N = size(positions, 2)
-    R_b = 7.2  # µm — Blockade radius
+    R_b = 7.2
     adj = zeros(Bool, N, N)
     for i in 1:N, j in (i+1):N
         r = sqrt(sum((positions[:,i] - positions[:,j]).^2))
@@ -54,102 +50,96 @@ function mis_subspace_indices(positions)
         if sz > max_sz; max_sz = sz; mis_bits = [b]
         elseif sz == max_sz; push!(mis_bits, b); end
     end
-    return mis_bits, max_sz
+    return mis_bits
 end
 
-function mis_target_state(positions, pick_index=1)
-    mis_bits, _ = mis_subspace_indices(positions)
-    b = mis_bits[pick_index]
+function solve_mis(name, positions; T=800.0, N_steps=60, max_iter=200,
+                   du_b=5e-4, ddu_b=5e-5, label="")
     N = size(positions, 2)
-    ψ = zeros(ComplexF64, 2^N)
-    ψ[b + 1] = 1.0
-    return ψ, mis_bits
-end
+    dim = 2^N
+    mis_bits = find_mis(positions)
 
-# ── Solve with Piccolo ─────────────────────────────────────────────────
-function solve_mis_piccolo(name, positions; T=1000.0, N_steps=100, max_iter=200,
-                           Ω0=Ω_MAX/2, label="")
-    N = size(positions, 2)
-    H_int, H_Ω, H_Δ = build_mis_system(positions)
-    ψ0 = zeros(ComplexF64, 2^N); ψ0[1] = 1.0  # |0…0⟩
+    H_int, H_O, H_D = build_system(positions)
+    ψ0 = zeros(ComplexF64, dim); ψ0[1] = 1.0
 
-    ψ_target, mis_bits = mis_target_state(positions, 1)
-    @printf("  %s N=%d dim=%d |MIS|=%d target_bit=0x%02x\n",
-            label, N, 2^N, length(mis_bits), mis_bits[1])
+    N_mis = length(mis_bits)
+    if N_mis == 1
+        ψ_target = zeros(ComplexF64, dim)
+        ψ_target[mis_bits[1] + 1] = 1.0
+        @printf("  %s N=%d dim=%d unique MIS bit=0x%02x\n",
+                label, N, dim, mis_bits[1])
+    else
+        ψ_target = zeros(ComplexF64, dim)
+        for b in mis_bits
+            ψ_target[b + 1] = 1.0 / sqrt(N_mis)
+        end
+        @printf("  %s N=%d dim=%d %d degenerate MIS states\n",
+                label, N, dim, N_mis)
+    end
     flush(stdout)
 
-    # QuantumSystem with drift (blockade) and two drives (Ω, Δ)
-    sys = QuantumSystem(H_int, [H_Ω, H_Δ], [(0.0, Ω_MAX), (-Δ_MAX, Δ_MAX)])
+    sys = QuantumSystem(H_int, [H_O, H_D], [(0.0, O_MAX), (-D_MAX, D_MAX)])
 
-    # Initial guess: smooth turn-on at Ω0, linear Δ sweep
     times = collect(range(0.0, T, length=N_steps))
-    Ω_init = Ω0 * abs2.(sin.(π * (times ./ T)))   # smooth rise/fall
-    Δ_init = range(-Δ_MAX/10, Δ_MAX/10, length=N_steps)  # modest sweep
-    u_init = vcat(Ω_init', Δ_init')
-    pulse = ZeroOrderPulse(u_init, times)
+    Ω_init = (O_MAX/3) * abs2.(sin.(π * (times ./ T)))
+    Δ_init = range(-D_MAX/10, D_MAX/10, length=N_steps)
+    umat = vcat(Ω_init', Δ_init')
+    pulse = ZeroOrderPulse(umat, times; initial_value=[0.0, 0.0],
+                           final_value=[0.0, 0.0])
 
     qtraj = KetTrajectory(sys, pulse, ψ0, ψ_target)
     qcp = SmoothPulseProblem(qtraj, N_steps;
         piccolo_options = PiccoloOptions(timesteps_all_equal = true),
-        Q = 100.0, R = 1e-4)
+        du_bound = du_b, ddu_bound = ddu_b,
+        Q = 100.0, R_u = 1e-6, R_du = 1e-5)
 
     solve!(qcp; max_iter = max_iter, print_level = 1,
-           callback = Piccolo.Callbacks.callback_factory(
-               (opt, st; kwargs...) -> begin
-                   k = Int(st.iter_count)
-                   if k % 10 == 0
-                       @printf("  iter=%d f=%.6e inf_pr=%.3e inf_du=%.3e\n",
-                               k, st.obj_value, st.inf_pr, st.inf_du)
-                       flush(stdout)
-                   end
-                   return true
-               end
-           ))
+           hessian_approximation = "limited-memory",
+        callback = Piccolo.Callbacks.callback_factory(
+            (opt, st; kwargs...) -> begin
+                k = Int(st.iter_count)
+                if k % 10 == 0
+                    @printf("  iter=%d f=%.6e inf_pr=%.3e inf_du=%.3e\n",
+                            k, st.obj_value, st.inf_pr, st.inf_du)
+                    flush(stdout)
+                end; return true
+            end))
 
-    # ── Re-rollout verification ──────────────────────────────────────────
     ψ_raw = ket_rollout(get_trajectory(qcp), sys)[:, end]
-    d = length(ψ_target)
-    ψ_final = ComplexF64[ψ_raw[i] + im * ψ_raw[i + d] for i in 1:d]
-
-    # P_MIS = sum over all MIS states
+    ψ_final = ComplexF64[ψ_raw[i] + im * ψ_raw[i + dim] for i in 1:dim]
     P_MIS = sum(abs2(ψ_final[b+1]) for b in mis_bits)
     F_target = abs2(dot(ψ_target, ψ_final))
 
-    @printf("  >>> P_MIS = %.8f  (to target state: F = %.8f)\n", P_MIS, F_target)
+    @printf("  >>> F_target = %.8f  P_MIS = %.8f\n", F_target, P_MIS)
     flush(stdout)
-    return (P_MIS = P_MIS, F_target = F_target, ψ_final = ψ_final, mis_bits = mis_bits)
+    return (P_MIS = P_MIS, F_target = F_target, ψ_final = ψ_final,
+            mis_bits = mis_bits)
 end
 
-# ═══════════════════════════════════════════════════════════════════════
-println("═══ Challenge 02 — MIS via Piccolo Optimal Control ═══")
+println("═══ Ch02 — MIS via Piccolo OC (L-BFGS) ═══")
 flush(stdout)
 
-# ── Star K₁₃ ──────────────────────────────────────────────────────────
+# Star K₁₃
 ρ = 5.5
 star_pos = [0.0   ρ      -ρ/2        -ρ/2;
             0.0   0.0     ρ*√3/2     -ρ*√3/2]
+star = solve_mis("Star K₁₃", star_pos; T=800.0, N_steps=60, max_iter=200,
+                 label="star")
 
-star_res = solve_mis_piccolo("Star K₁₃", star_pos;
-    T=1000.0, N_steps=100, max_iter=300, Ω0=6.283e-3, label="star")
-
-# ── Cycle C₅ ──────────────────────────────────────────────────────────
+# Cycle C₅
 s = 5.5
 angles = [2π * k / 5 for k in 0:4]
-pentagon_pos = [s * cos.(angles)  s * sin.(angles)]'
+pent_pos = [s * cos.(angles)  s * sin.(angles)]'
+pent = solve_mis("Cycle C₅", pent_pos; T=800.0, N_steps=60, max_iter=200,
+                 label="pent")
 
-pent_res = solve_mis_piccolo("Cycle C₅", pentagon_pos;
-    T=1000.0, N_steps=100, max_iter=300, Ω0=6.283e-3, label="pent")
-
-# ═══════════════════════════════════════════════════════════════════════
-println("\n═══ CHALLENGE 02 RESULTS ═══")
-println("  Star K₁₃  P_MIS = $(star_res.P_MIS)")
-println("  Cycle C₅  P_MIS = $(pent_res.P_MIS)")
-println("\n  Baseline (4000ns linear ramp):")
-println("    Star:  P_MIS = 0.909")
-println("    Pent:  P_MIS = 0.320")
+println("\n═══ RESULTS ═══")
+@printf("  Star K₁₃:  P_MIS = %.8f (Bezier: 1.00007)\n", star.P_MIS)
+@printf("  Cycle C₅:  P_MIS = %.8f (Bezier: 0.999015)\n", pent.P_MIS)
 flush(stdout)
 
-JLD2.save("ch02_star.jld2", "P_MIS", star_res.P_MIS, "ψ_final", star_res.ψ_final)
-JLD2.save("ch02_pentagon.jld2", "P_MIS", pent_res.P_MIS, "ψ_final", pent_res.ψ_final)
+JLD2.save("ch02_results.jld2",
+          "star_P_MIS", star.P_MIS, "star_ψ", star.ψ_final,
+          "pent_P_MIS", pent.P_MIS, "pent_ψ", pent.ψ_final)
 println("\nDone.")
 flush(stdout)

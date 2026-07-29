@@ -9,7 +9,7 @@ const C6 = 865.723
 const Ω_MAX = 0.012566
 const Δ_RANGE = 0.01257  # ±12.57 rad/µs
 
-include("mis_sparse.jl")
+include("../lib/mis_sparse.jl")
 
 # ── Optimizer: Nelder-Mead over [Ω_knots[2:5], Δ_knots[2:5]] (8 params) ──
 # Always keep Ω[1]=Ω[end]=0, Δ[1]=Δ[end] fixed at sweep endpoints.
