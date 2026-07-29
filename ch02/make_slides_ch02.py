@@ -108,10 +108,10 @@ ax.add_patch(FancyArrow(-2.7, -1.5, 5.0, 0, width=0.09, color=BAD, alpha=0.75))
 ax.text(0, -1.95, "one laser shines on ALL atoms at once", ha="center",
         fontsize=10, color=BAD)
 bullets(fig, [
-    "Every atom is OFF (|g⟩) or ON (|r⟩).",
-    "We cannot poke atoms one by one — one\nlaser hits all of them together.",
-    "Our only two knobs, over time:\nΩ(t) = laser power, δ(t) = frequency offset.",
-    "Plus one more freedom: WHERE we\nplace the atoms before we start.",
+    "Every atom is either OFF — the ground state |g⟩ —\nor ON, the Rydberg state |r⟩.",
+    "We cannot poke atoms one by one:\na single laser hits all of them together.",
+    "We have just two knobs over time —\nthe laser power Ω(t) and the\nfrequency offset δ(t).",
+    "Plus one more freedom: WHERE we place\nthe atoms before anything starts.",
 ], x=0.53, y=0.74, dy=0.115, fs=13.5)
 save(fig)
 
@@ -139,10 +139,10 @@ atom(ax, 7.6, 0.8, True, blockade=1.55); atom(ax, 10.9, 0.8, True, blockade=1.55
 ax.text(9.25, 3.15, "far apart (> 7.2 µm): no overlap\n= NO edge — both may be ON",
         ha="center", fontsize=9.5, color=INK)
 bullets(fig, [
-    "Each atom = one dot (vertex)\nof the graph.",
-    "Two atoms closer than the blockade\nradius R_b ≈ 7.2 µm = one edge.",
-    "So we DRAW the puzzle with tweezers:\natom positions are the graph.",
-    "We verified every distance in code —\nthe register is exactly the target graph.",
+    "Each atom becomes one dot —\none vertex — of the graph.",
+    "Any two atoms closer than the blockade\nradius R_b ≈ 7.2 µm form one edge.",
+    "So we literally DRAW the puzzle with\noptical tweezers: the atom positions\nARE the graph.",
+    "And we verified every distance in code,\nso the register is exactly the target graph.",
 ], x=0.63, y=0.74, dy=0.115, fs=12.5)
 save(fig)
 
@@ -188,7 +188,7 @@ image_panel(fig, "fig_ch02_results.png", [0.04, 0.15, 0.92, 0.6],
             "left/middle — x: time (µs), blue: laser power Ω, red: frequency offset δ · "
             "right — x: puzzle, y: success probability P_MIS")
 bullets(fig, [
-    "Grey bars (baseline): 0.727 and 0.657.  Green bars (ours): 0.999998 and 0.999999.",
+    "The grey bars are the baseline, at 0.727 and 0.657; the green bars are ours, at 0.999998 and 0.999999.",
 ], y=0.13, dy=0.05, fs=13)
 save(fig)
 
@@ -197,7 +197,7 @@ fig = new_slide("Pasqal Cloud: 1500 photographs, 1500 correct answers", "validat
 bullets(fig, [
     "We sent 3 optimized sweeps to Pasqal's cloud emulator, 500 shots each.",
     "Star: 500/500 photos showed exactly the right answer (0111 = hub OFF, leaves ON).",
-    "Pentagon (1000 ns): 500/500 correct — split across ALL FIVE valid answers:\n114, 98, 97, 96, 95 — statistically even.",
+    "For the pentagon at 1000 ns: again 500 out of 500 correct — split across ALL FIVE valid answers:\n114, 98, 97, 96 and 95 counts. That is statistically even.",
     "That even split is a quantum signature: the machine doesn't pick one answer —\nit holds all five at once and samples them fairly.",
     "Pentagon (2000 ns): 500/500 again. Every batch ID is recorded in the repo for audit.",
 ], y=0.74, dy=0.11, fs=14)
@@ -209,7 +209,7 @@ image_panel(fig, "fig_ch02_lowbw.png", [0.03, 0.15, 0.94, 0.58],
             "left — x: number of knobs, y: P_MIS · middle — the 5-knob sweep vs the 125-knob one · "
             "right — x: new graphs, y: P_MIS with ZERO re-tuning")
 bullets(fig, [
-    "FIVE knobs (vs 125) reach 0.996–0.999 — found in ~30 seconds, and smooth enough for any hardware.",
+    "Just FIVE knobs — instead of 125 — reach 0.996 to 0.999, found in about thirty seconds, and smooth enough for any hardware.",
     "The same 5 knobs, re-used unchanged on bigger rings: still beat the baseline (+0.30 on the 9-ring).\nOn a structurally different random graph they lose — honest limit, stated as a finding.",
 ], y=0.135, dy=0.055, fs=12)
 save(fig)
@@ -220,11 +220,11 @@ image_panel(fig, "screenshots/pasqal_qpu_star_bitstrings.png", [0.03, 0.13, 0.57
             "Pasqal's portal · top-left: OUR STAR, drawn by the machine's register viewer · "
             "bottom — x: measured pattern, y: % of 500 shots")
 bullets(fig, [
-    "Register panel: q0 hub linked to q1–q3\n— Pasqal's own UI shows the graph we\nencoded in atom positions.",
-    "The towering bar: 0111 = the correct\nanswer, at 68.4% (342 of 500 shots).\nSecond place: 9.2%.",
-    "Real atoms solve the puzzle decisively\n— the right answer wins by 7×.",
-    "Below our predicted 80–93% window:\nholding 3 fragile ON-atoms compounds\nreadout loss — we published the\nprediction first and the analysis after.",
-], x=0.63, y=0.76, dy=0.105, fs=11.5)
+    "Look at the register panel: the hub q0\nlinked to q1 through q3 — Pasqal's own\nUI is showing the graph we encoded\nin atom positions.",
+    "The towering bar is 0111 — the correct\nanswer — at 68.4%, meaning 342 of 500\nshots. Second place gets just 9.2%.",
+    "So real atoms solve the puzzle\ndecisively: the right answer wins\nby a factor of seven.",
+    "This landed below our predicted 80–93%\nwindow: holding three fragile ON-atoms\ncompounds readout loss. We published\nthe prediction first, the analysis after.",
+], x=0.63, y=0.78, dy=0.092, fs=11)
 save(fig)
 
 # ── 11 · QPU pulse ──────────────────────────────────────────────────────
@@ -232,11 +232,11 @@ fig = new_slide("The sweep the machine actually played", "real hardware · the p
 image_panel(fig, "screenshots/pasqal_qpu_star_pulse.png", [0.03, 0.13, 0.57, 0.65],
             "Pasqal portal, Pulses tab · x: time 0–1000 ns · purple: laser power Ω(t) · white: frequency offset δ(t)")
 bullets(fig, [
-    "1000 nanoseconds, one smooth bump\nof laser power (purple) — our\n5-knob, hardware-friendly sweep.",
-    "The white curve is the story: it starts\nNEGATIVE (being ON is penalized)\nand ends POSITIVE (being ON is\nrewarded — but only where the\nblockade allows it).",
-    "That tilt walks the atoms from\n'all OFF' to 'the best seating plan'.",
-    "Bandwidth ≤ 1 MHz by construction —\nwell inside what the hardware can play.",
-], x=0.63, y=0.76, dy=0.105, fs=11.5)
+    "This sweep is 1000 nanoseconds: one\nsmooth bump of laser power, in purple —\nour five-knob, hardware-friendly design.",
+    "The white curve tells the story: it starts\nNEGATIVE, so being ON is penalized,\nand ends POSITIVE, so being ON is\nrewarded — but only where the\nblockade allows it.",
+    "That slow tilt walks the atoms from\n'all OFF' to 'the best seating plan'.",
+    "And its bandwidth is under 1 MHz by\nconstruction — well inside what the\nhardware can play.",
+], x=0.63, y=0.78, dy=0.092, fs=11)
 save(fig)
 
 # ── 11b · the metric + why it matters ───────────────────────────────────
