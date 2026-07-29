@@ -81,5 +81,37 @@
    "P_rr": 0.0
   },
   "sim_fidelity": 0.999435
+ },
+ "pulse_r1_fast": {
+  "target": "EMU_FREE",
+  "batch_id": "bf7553c5-e201-4b79-bb7a-254f8e45ed9f",
+  "job_status": "DONE",
+  "counts": {
+   "10": 254,
+   "01": 246
+  },
+  "pops": {
+   "P_gg": 0.0,
+   "P_gr": 0.492,
+   "P_rg": 0.508,
+   "P_rr": 0.0
+  },
+  "sim_fidelity": 0.99999888
+ },
+ "pulse_r2_fast": {
+  "target": "EMU_FREE",
+  "batch_id": "11f99539-85bb-4224-997d-bded4529d5a3",
+  "job_status": "DONE",
+  "counts": {
+   "10": 255,
+   "01": 245
+  },
+  "pops": {
+   "P_gg": 0.0,
+   "P_gr": 0.49,
+   "P_rg": 0.51,
+   "P_rr": 0.0
+  },
+  "sim_fidelity": 0.99999754
  }
 }
