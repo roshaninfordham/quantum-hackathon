@@ -1,0 +1,22 @@
+
+═══ Optimizing star_K13 (N=4, dim=16, T=4000ns) ═══
+  Initial P_MIS = 0.990106
+  iter=1 best P_MIS=0.992475
+
+  >>> Best value: P_MIS = 1.000067
+  >>> Ω knots: 0.0 0.002827 0.00682 0.007721 0.00705 0.0
+  >>> Δ knots: -0.01257 -0.00825 -0.000465 0.006477 0.008555 0.01257
+  Saved to ch02_opt_star_K13.toml
+
+═══ Optimizing cycle_C5 (N=5, dim=32, T=2000ns) ═══
+  Initial P_MIS = 0.631553
+  iter=1 best P_MIS=0.634620
+
+  >>> Best value: P_MIS = 0.999015
+  >>> Ω knots: 0.0 0.011489 0.008822 0.004311 0.001233 0.0
+  >>> Δ knots: -0.01257 -0.004121 -0.001474 0.004036 0.002981 0.01257
+  Saved to ch02_opt_cycle_C5.toml
+
+═══ FINAL OPTIMIZED RESULTS ═══
+  Star K₁₃  P_MIS = 1.0000665406887046  (was 0.949)
+  Cycle C₅  P_MIS = 0.9990153449053416  (was 0.821)
