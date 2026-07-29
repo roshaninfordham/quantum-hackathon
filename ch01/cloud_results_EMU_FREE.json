@@ -1,0 +1,85 @@
+{
+ "pulse_r1": {
+  "target": "EMU_FREE",
+  "batch_id": "8189f784-b18e-498a-9d12-6a9cc0a1242e",
+  "job_status": "DONE",
+  "counts": {
+   "10": 271,
+   "01": 229
+  },
+  "pops": {
+   "P_gg": 0.0,
+   "P_gr": 0.458,
+   "P_rg": 0.542,
+   "P_rr": 0.0
+  },
+  "sim_fidelity": 0.99989513
+ },
+ "pulse_r2": {
+  "target": "EMU_FREE",
+  "batch_id": "e3587dba-d8ff-4832-8578-e3e97436501e",
+  "job_status": "DONE",
+  "counts": {
+   "10": 248,
+   "01": 249,
+   "11": 3
+  },
+  "pops": {
+   "P_gg": 0.0,
+   "P_gr": 0.498,
+   "P_rg": 0.496,
+   "P_rr": 0.006
+  },
+  "sim_fidelity": 0.99701088
+ },
+ "pulse_robust_r1": {
+  "target": "EMU_FREE",
+  "batch_id": "f59eb9c0-5004-43e7-8a8e-ddb1e697b718",
+  "job_status": "DONE",
+  "counts": {
+   "01": 258,
+   "10": 242
+  },
+  "pops": {
+   "P_gg": 0.0,
+   "P_gr": 0.516,
+   "P_rg": 0.484,
+   "P_rr": 0.0
+  },
+  "sim_fidelity": 0.9994426
+ },
+ "pulse_robust_r2": {
+  "target": "EMU_FREE",
+  "batch_id": "064e3f5c-8c59-432f-9ae3-b1342d027869",
+  "job_status": "DONE",
+  "counts": {
+   "10": 257,
+   "01": 242,
+   "11": 1
+  },
+  "pops": {
+   "P_gg": 0.0,
+   "P_gr": 0.484,
+   "P_rg": 0.514,
+   "P_rr": 0.002
+  },
+  "sim_fidelity": 0.99700751
+ },
+ "pulse_r2_shaped": {
+  "target": "EMU_FREE",
+  "batch_id": "0efeca2b-e593-412c-a63a-f2e751457ad3",
+  "job_status": "DONE",
+  "counts": {
+   "10": 240,
+   "01": 259,
+   "00": 1
+  },
+  "pops": {
+   "P_gg": 0.002,
+   "P_gr": 0.518,
+   "P_rg": 0.48,
+   "P_rr": 0.0
+  },
+  "sim_fidelity": 0.999435
+ }
+}
