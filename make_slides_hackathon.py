@@ -301,7 +301,7 @@ lines(fig, [
     "Derivation: in perfect blockade the system\nis a two-level oscillation at √2·Ω, and a\nhalf-turn (π rotation) at maximum drive\ntakes exactly π/(√2·Ω_max). No pulse can\nbeat this — it is a rotation, not a race.",
     "Measured: F = 0.999999 at 224 ns (r₁),\nonly 25 ns above the bound.",
     "At r₂ the weak blockade sets its own wall\nnear 420 ns — the optimizer must route\npopulation THROUGH |rr⟩ and back, and\nthat detour time is set by V, not Ω_max.",
-], x=0.67, y=0.66, dy=0.145, fs=11.5)
+], x=0.67, y=0.70, dy=0.125, fs=11)
 save(fig)
 
 # ═══ 12 · CH1 NOISE ══════════════════════════════════════════════════════
@@ -387,8 +387,8 @@ lines(fig, [
 ], y=0.51, dy=0.10, fs=12.5)
 eq(fig, r"$U_{\mathrm{diag}} \,<\, \delta_f \,<\, U_{nn}\,:\qquad 1.74 \;<\; 12.57 \;<\; 31.28\ \ \mathrm{rad/\mu s}$"
         "   — satisfied",
-   y=0.27, fs=15)
-fig.text(0.055, 0.15, "All three numbers computed by us from C₆ and the geometry; the brief's stated window is confirmed.",
+   y=0.235, fs=15)
+fig.text(0.055, 0.115, "All three numbers computed by us from C₆ and the geometry; the brief's stated window is confirmed.",
          fontsize=11.5, color=MUTED)
 save(fig)
 
@@ -416,8 +416,9 @@ lines(fig, [
     "Five numbers: A, δ₀, δ_f, c₁, c₂. (This is the CRAB parameterization — Chopped RAndom Basis,\nCaneva, Calarco & Montangero 2011.) Its spectrum is capped at 2/(2T) = 1 MHz by construction —\na hardware-bandwidth certificate you cannot get from a 125-knot GRAPE waveform after the fact.",
     "Scores: 0.9962 (star) and 0.9994 (pentagon) — within half a percent of full GRAPE. Found in ~30 s\nby derivative-free search. Cloud check: 498/500 and 500/500.",
     "Transfer test — the same five numbers, unchanged, on graphs never optimized for: beats the baseline\non the 7-ring (+0.05) and the 9-ring (+0.30); loses on a structurally different random graph (0.12 vs\n0.36). Transfer is a family property, not magic — measured, and stated as the honest limit.",
-], y=0.545, dy=0.13, fs=12.5)
-image_panel(fig, "ch02/fig_ch02_lowbw.png", [0.13, 0.075, 0.74, 0.155])
+], y=0.55, dy=0.145, fs=13)
+fig.text(0.055, 0.10, "Full figure: ch02/fig_ch02_lowbw.png in the repository (parameter-count sweep, waveforms, transfer bars).",
+         fontsize=10, color=MUTED)
 save(fig)
 
 # ═══ 19 · CH2 RESULTS ════════════════════════════════════════════════════
@@ -436,10 +437,10 @@ image_panel(fig, "ch02/screenshots/pasqal_qpu_star_bitstrings.png", [0.03, 0.13,
             "Pasqal's results page (batch 653e8ab0) · the machine's register viewer drew OUR star · y: % of 500 shots")
 lines(fig, [
     "The correct answer 0111 dominates:\n68.4% (342/500). Runner-up: 9.2%.",
-    "Below our pre-published 80–93% window\n— and the error anatomy says why: the\nnext three bars are all 'two of three\nleaves' (24.4%) — one ON atom lost.",
-    "The quantitative reason: the target holds\nTHREE fragile ON atoms; per-atom loss ε\ncompounds as (1−ε)³. Our window scaled\nthe 2-atom result naively — that model\nerror is ours and is documented.",
-    "Fix (costed, future): a 2-point SPAM\ncalibration job would correct this to\n≈ 0.85+.",
-], x=0.63, y=0.77, dy=0.108, fs=10.5)
+    "Below our pre-published 80% floor.\nThe error anatomy says why: the next\nthree bars are 'two of three leaves' —\none ON atom lost (24.4%).",
+    "Why: THREE fragile ON atoms; per-atom\nloss ε compounds as (1−ε)³. Our window\nscaled the 2-atom result naively.",
+    "Fix: a SPAM-calibration job → ≈ 0.85+.",
+], x=0.63, y=0.78, dy=0.096, fs=10.5)
 save(fig)
 
 # ═══ 21 · SCORE SHEET ════════════════════════════════════════════════════
