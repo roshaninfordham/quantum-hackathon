@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+# never commit auth material
+pasqal_auth.json
+*.token
