@@ -1,117 +1,121 @@
-# Challenge 01 — Entangling two atoms with one global pulse
+# A Real Quantum Hackathon — team solutions
 
-**Harmoniqs × Pasqal × Microsoft quantum hackathon · July 29 2026 · Microsoft Garage NYC**
+**Harmoniqs × Pasqal × Microsoft · July 29 2026 · Microsoft Garage NYC**
 
-This repository is a complete, reproducible solution to Challenge 01:
-prepare the Bell state **|Ψ⁺⟩ = (|gr⟩ + |rg⟩)/√2** on two neutral atoms at
-two different spacings, beating the starter-kit reference pulse at both,
-inside the real device's published limits — validated on Pasqal Cloud.
+One control problem, three stages: a register of neutral atoms under the
+analog-mode Rydberg Hamiltonian, driven by a single global pulse
+(Ω(t), δ(t)) plus the atom positions. We iterate in exact simulation and
+validate on Pasqal Cloud — including one run on the real quantum computer.
 
-| | r₁ = 5.0 µm | r₂ = 6.5 µm | evidence |
+## Challenge index
+
+| | Status | Baseline → Ours | Evidence |
 |---|---|---|---|
-| Reference pulse (baseline) | 0.992564 | 0.750003 | [score.py](ch01/score.py) |
-| **Ours, per-spacing** | **0.999895** | **0.999435** | [REPORT.md](ch01/REPORT.md) |
-| **Ours, one robust waveform** | **0.999443** | **0.997008** | [fig_robustness.png](ch01/fig_robustness.png) |
-| **Ours, time-optimal (224 / 420 ns — 6–11× shorter)** | **0.999999** | **0.999998** | [docs/ch01/06-time-optimal.md](docs/ch01/06-time-optimal.md) |
-| **Ours, hardware-true smooth (v3, FRESNEL envelope)** | **1.000000** | **1.000000** | [docs/ch01/07-hardware.md](docs/ch01/07-hardware.md) |
-| Cloud validation (500 shots ea.) | ✅ | ✅ | [cloud_results](ch01/cloud_results_EMU_FREE.json) |
-| **Real QPU run (FRESNEL_CAN1, 500 shots)** | **P_bell = 0.894 measured** | n/a (lattice can't form 6.5 µm) | [qpu_results](ch01/qpu_results.json) · [docs/ch01/07 §4](docs/ch01/07-hardware.md) |
+| **[Challenge 01](#challenge-01--entangle-two-atoms)** — entangle 2 atoms at two spacings | ✅ complete **+ real QPU** | F: 0.9926/0.7500 → **1.000000/1.000000** | [REPORT](ch01/REPORT.md) · [docs/ch01/](docs/ch01/) |
+| **[Challenge 02](#challenge-02--encode-a-graph-solve-it)** — encode a graph, measure its MIS | ✅ complete, cloud-validated | P_MIS: 0.727/0.657 → **0.999998/0.999999** | [REPORT](ch02/REPORT.md) · [docs/ch02/](docs/ch02/) |
+| Challenge 03 — beat published results at 10–80+ atoms | not attempted | — | — |
 
-![Results](ch01/ch01_results.png)
+*Every number in this repo is produced by a committed scorer, traceable to
+its source, and cross-validated in Pulser (the judge's simulator). Method
+discipline: [docs/ch01/08-prompts.md](docs/ch01/08-prompts.md).*
 
 ---
 
-## From first principles, in five steps
+## Challenge 01 — entangle two atoms
 
-**1 · The qubit.** Each atom is a two-level system: ground |g⟩ and a highly
-excited *Rydberg* state |r⟩. A laser couples them with Rabi frequency Ω(t)
-(how hard we drive) and detuning δ(t) (how far off-resonance). Both knobs are
-**global** — every atom sees the same light. *→ [docs/ch01/01-challenge.md](docs/ch01/01-challenge.md)*
+**Task:** prepare the Bell state |Ψ⁺⟩ = (|gr⟩+|rg⟩)/√2 with one global
+pulse, at spacings 5.0 µm *and* 6.5 µm, beating the reference pulse at both.
 
-**2 · The interaction.** Two atoms in |r⟩ repel: energy V = C₆/r⁶. At close
-spacing this shift is so large the laser cannot excite both — the **Rydberg
-blockade**. Blockade radius R_b ≈ 7.2 µm here; both our spacings sit inside it,
-but not equally deep. *→ [docs/ch01/01-challenge.md](docs/ch01/01-challenge.md)*
+**Key insight:** the baseline fails at 6.5 µm because blockade quality
+V/Ω = 1.8 lets 22% of the population leak into the forbidden |rr⟩. V is
+geometry, but Ω is ours — restore V/Ω ≥ 9, then push to the quantum speed
+limit with optimal control.
 
-**3 · Why blockade creates entanglement.** Driving both atoms from |gg⟩, the
-blockade forbids |rr⟩, so the system oscillates between |gg⟩ and the *shared*
-single excitation (|gr⟩+|rg⟩)/√2 — which **is** the Bell state we're asked
-for. The oscillation runs √2 faster than a single atom (both atoms reach for
-the same photon). Stop at the π-pulse time T = π/(√2Ω): done.
-*→ [docs/ch01/02-physics.md](docs/ch01/02-physics.md), derivation in [docs/ch01/05-methods.md §2](docs/ch01/05-methods.md)*
+| Pulse generation | r₁ = 5.0 µm | r₂ = 6.5 µm | T |
+|---|---|---|---|
+| Reference (baseline) | 0.992564 | 0.750003 | 352 ns |
+| v1 analytic (4 parameters, interpretable) | 0.999895 | 0.999435 | ~2.4 µs |
+| v1r one spacing-robust waveform | 0.999443 | 0.997008 | 2.4 µs |
+| v2 time-optimal (near QSL = 177 ns) | 0.999999 | 0.999998 | 224/420 ns |
+| **v3 hardware-true smooth** | **1.000000** | **1.000000** | 352/600 ns |
 
-**4 · Why the baseline breaks at r₂ — the one number that matters.** Blockade
-quality is the ratio **V/Ω**. The reference pulse (Ω = 2π×1 MHz) gives
-V/Ω = 8.8 at r₁ (fine: F = 0.993) but **1.83** at r₂ — the "forbidden" |rr⟩
-takes 22% of the population and F collapses to 0.75. See it happen:
-[fig_dynamics_r2.png](ch01/fig_dynamics_r2.png).
-*→ single-knob proof: [fig_omega_sweep.png](ch01/fig_omega_sweep.png), [docs/ch01/05-methods.md §4](docs/ch01/05-methods.md)*
+**Hardware:** 7 pulses × 500 shots on Pasqal Cloud emulator (all match
+predictions) and one run on the **real FRESNEL_CAN1 QPU**: P_bell = 0.894
+(447/500 shots entangled), inside the pre-registered error window.
+Bonus science: the measured time–fidelity frontier, and a noise study
+showing pulse *duration* is the dominant error coupling (it flips the
+pulse ranking).
 
-**5 · The fix.** V is fixed by geometry, but Ω is ours: slow down (V/Ω ≥ 9),
-smooth the edges (sin² ramps), and cancel the small energy shift of the target
-state with δ(t) — a shift our optimizer rediscovered to three digits of the
-perturbation-theory value Ω²/2V. Result: ≥ 0.9994 at both spacings.
-*→ [docs/ch01/02-physics.md](docs/ch01/02-physics.md), all parameters in [docs/ch01/05-methods.md §5](docs/ch01/05-methods.md)*
+**Read:** [first-principles walkthrough](docs/ch01/00-overview.md) ·
+[methods & provenance](docs/ch01/05-methods.md) ·
+[time-optimal study](docs/ch01/06-time-optimal.md) ·
+[hardware & QPU results](docs/ch01/07-hardware.md) ·
+[formal report](ch01/REPORT.md)
 
-**6 · Then make it fast.** Slowing down costs coherence on real hardware. Using
-optimal control (GRAPE with exact adjoint gradients on the exact 3-state
-symmetric model — the full 16-point time–fidelity frontier computes in 5.4 s),
-we push to the quantum speed limit: **F = 0.999999 at 224 ns (r₁) and 420 ns
-(r₂)** — 6–11× shorter than step 5, near the theoretical bound T = π/(√2·Ω_max)
-= 177 ns. *→ [docs/ch01/06-time-optimal.md](docs/ch01/06-time-optimal.md), frontier:
-[fig_time_frontier.png](ch01/fig_time_frontier.png)*
-
-**7 · Then make it real.** Under a Lindblad noise model (Rydberg decay + laser
-dephasing) the ranking flips: slow pulses collapse to F ≈ 0.73, short ones keep
-0.93–0.97 — duration *is* the noise coupling. We re-optimized under the real
-FRESNEL envelope with slew-limited smooth shapes (the scientist's "don't shoot
-up"), and sent the winner to the **actual quantum computer** — 500 shots on
-FRESNEL_CAN1, two atoms on the calibrated lattice.
-*→ [docs/ch01/07-hardware.md](docs/ch01/07-hardware.md); independent Julia/Piccolo
-cross-validation in [piccolo-solutions/](piccolo-solutions/)*
+![Ch01 results](ch01/ch01_results.png)
 
 ---
 
-## Reading paths
+## Challenge 02 — encode a graph, solve it
 
-| You are… | Read, in order |
-|---|---|
-| **Anyone** (10 min) | this page → [02-physics](docs/ch01/02-physics.md) |
-| **Reviewing the science** | [05-methods](docs/ch01/05-methods.md) — every number traced to source, derivations, error analysis — then [06-time-optimal](docs/ch01/06-time-optimal.md) for the speed-limit study |
-| **Reviewing the engineering** | [03-process](docs/ch01/03-process.md) → [ch01/score.py](ch01/score.py) → [ch01/submit_ch01.py](ch01/submit_ch01.py) |
-| **Asking "so what?"** | [04-product](docs/ch01/04-product.md) — geometry-robust entanglement as the product |
-| **Judging the challenge** | [ch01/REPORT.md](ch01/REPORT.md) — the formal submission |
+**Task:** place 4–5 atoms so blockade physics realizes a target graph
+(star K₁,₃ / cycle C₅), then design one global sweep so a final photograph
+returns a **maximum independent set** — the textbook NP-hard problem, run
+as physics. Score: P_MIS, probability the measurement shows an optimal
+solution.
 
-## Everything in this repo
+**Key insight:** the baseline linear ramp is an adiabatic algorithm that
+wastes its time budget cruising while losing probability at the minimum
+spectral gap. We drop the adiabatic assumption entirely: full-space
+adjoint GRAPE maximizes P_MIS directly (a *projector* objective — C₅ has
+five equally-valid answers and gets a coherent superposition of all five,
+each at exactly 0.200).
 
-| Artifact | What it is |
-|---|---|
-| [ch01/score.py](ch01/score.py) | **The one scorer.** Device-validated Pulser sequence → QuTiP fidelity. Selftests its own basis conventions. Every number in every doc came from here. |
-| [ch01/pulse_r1.toml](ch01/pulse_r1.toml) · [pulse_r2.toml](ch01/pulse_r2.toml) · [pulse_r2_shaped.toml](ch01/pulse_r2_shaped.toml) | Per-spacing optimized pulses (4 ns knots, contract-valid) |
-| [ch01/pulse_robust_r1.toml](ch01/pulse_robust_r1.toml) · [pulse_robust_r2.toml](ch01/pulse_robust_r2.toml) | The single spacing-robust waveform, registered at each spacing |
-| [ch01/pulse_r1_fast.toml](ch01/pulse_r1_fast.toml) · [pulse_r2_fast.toml](ch01/pulse_r2_fast.toml) | Time-optimal pulses (224 / 420 ns), near the quantum speed limit |
-| [ch01/time_frontier.json](ch01/time_frontier.json) · [fig_time_frontier.png](ch01/fig_time_frontier.png) | The measured time–fidelity frontier at both spacings |
-| [ch01/cloud_results_EMU_FREE.json](ch01/cloud_results_EMU_FREE.json) | Measured counts from Pasqal Cloud, 500 shots/pulse, with batch IDs |
-| [ch01/make_figures.py](ch01/make_figures.py) | Regenerates every figure from the committed artifacts |
-| [ch01/fast_opt.py](ch01/fast_opt.py) | Time-optimal GRAPE on the exact 3×3 symmetric ladder (~10³× faster than full-space simulation) |
-| [ch01/analytic_*.json](ch01/) · [sweep_data.json](ch01/sweep_data.json) | Raw optimization traces and sweep data behind the plots |
-| [ch01/pasqal_login.py](ch01/pasqal_login.py) · [pasqal_client.py](ch01/pasqal_client.py) · [submit_ch01.py](ch01/submit_ch01.py) | Cloud pipeline: interactive login → short-lived token → token-only submission |
-| [skills/rydberg-bell-pulse/SKILL.md](skills/rydberg-bell-pulse/SKILL.md) | The recipe + traps, packaged as an Amicode skill |
-| [docs/](docs/) | The five documents linked throughout this page |
+| Graph | Baseline (deck ramp, 4000 ns) | **Ours (GRAPE, 1000–2000 ns)** | Under noise |
+|---|---|---|---|
+| star K₁,₃ (α = 3) | 0.727135 | **0.999998** | 0.812 vs 0.380 |
+| cycle C₅ (α = 2) | 0.657049 | **0.999999** | 0.926 vs 0.648 |
+
+Also 4× *shorter* than the baseline — which is why the noise column is a
+blowout, not a tie.
+
+**Read:** [the challenge, in plain words](docs/ch02/01-challenge.md) ·
+[methods & verification](docs/ch02/02-methods.md) ·
+[formal report](ch02/REPORT.md)
+
+![Ch02 results](ch02/fig_ch02_results.png)
+
+---
+
+## Repository layout
+
+```
+ch01/                 Challenge 01: scorer, pulses (.toml), optimizers,
+                      cloud + QPU results, figures, REPORT.md
+ch02/                 Challenge 02: P_MIS scorer, GRAPE optimizer,
+                      sweeps (.npz), cloud results, figures, REPORT.md
+docs/ch01/  00-08     first-principles primer → methods → time-optimal →
+                      hardware/QPU → anti-hallucination prompt pack
+docs/ch02/  01-02     challenge explainer → methods & verification
+piccolo-solutions/    teammate's independent Julia/Piccolo track
+                      (cross-validates our frontiers)
+skills/               the Amicode skill packaging the ch01 recipe
+```
 
 ## Reproduce
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install pulser pulser-simulation pasqal-cloud scipy
-.venv/bin/python ch01/score.py           # constants, baselines, selftest
-.venv/bin/python ch01/make_figures.py    # regenerate all evidence figures
-# cloud (your own project):
-export PASQAL_PROJECT_ID=<your-project-id>
-.venv/bin/python ch01/pasqal_login.py <email>       # interactive, token-only after this
-.venv/bin/python ch01/submit_ch01.py EMU_FREE pulse_r1 pulse_r2_shaped
+.venv/bin/python ch01/score.py      # ch01 baselines + selftest
+.venv/bin/python ch02/score02.py    # ch02 baselines + selftest
+.venv/bin/python ch01/fast_opt.py   # ch01 time-fidelity frontier (~5 s)
+.venv/bin/python ch02/opt02.py      # ch02 GRAPE (~2 min)
+# cloud (your own project id):
+export PASQAL_PROJECT_ID=<uuid>
+.venv/bin/python ch01/pasqal_login.py <email>   # interactive; token-only after
 ```
 
-Toolchain: [Amicode](https://harmoniqs.co) (problem/run/contract scaffolding) ·
-[Pulser](https://pulser.readthedocs.io) + QuTiP (simulation) ·
-[pasqal-cloud](https://docs.pasqal.com/cloud/) (hardware access).
+Toolchain: [Amicode](https://harmoniqs.co) ·
+[Pulser](https://pulser.readthedocs.io) + QuTiP ·
+[pasqal-cloud](https://docs.pasqal.com/cloud/).
