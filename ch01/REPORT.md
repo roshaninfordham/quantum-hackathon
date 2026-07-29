@@ -8,13 +8,25 @@ T ≤ 6000 ns, 4 ns clock). All fidelities below come from one scorer
 (`score.py`, QuTiP emulation of the validated Pulser sequence) — the same
 code path that built the submitted cloud sequences.
 
-## Results
+## Results (final — all four pulse generations)
 
-| Pulse | r = 5.0 µm | r = 6.5 µm | In envelope |
-|---|---|---|---|
-| Reference (square π-pulse, 352 ns) | 0.992564 | 0.750003 | ✓ |
-| **Ours, per-spacing** | **0.999895** | **0.999435** | ✓ (contract-validated) |
-| **Ours, one robust pulse (same waveform both r)** | **0.999443** | **0.997008** | ✓ (contract-validated) |
+| Pulse | T | r = 5.0 µm | r = 6.5 µm | In envelope |
+|---|---|---|---|---|
+| Reference (square π-pulse) | 352 ns | 0.992564 | 0.750003 | ✓ |
+| v1 — analytic per-spacing | 2408/2720 ns | **0.999895** | **0.999435** | ✓ |
+| v1r — one robust waveform (both r) | 2400 ns | **0.999443** | **0.997008** | ✓ |
+| v2 — time-optimal (near-QSL) | 224/420 ns | **0.999999** | **0.999998** | ✓ |
+| v3 — hardware-true smooth (FRESNEL bounds) | 352/600 ns | **1.000000** | **1.000000** | ✓ |
+
+All contract-validated. Full studies: time–fidelity frontier
+(`../docs/06-time-optimal.md`), noise ranking and hardware constraints
+(`../docs/07-hardware.md`).
+
+**Real-QPU validation (FRESNEL_CAN1, 500 shots, 260 ns smooth pulse,
+r = 5.0 µm):** P_bell = **0.894** (447/500 shots in the entangled manifold),
+01/10 symmetric within 1.5σ, blockade leakage 2.4% — within one binomial
+error bar of the window pre-registered before the run. Batch
+`a1a4d5e8-…` in `qpu_batch.json` / `qpu_results.json`.
 
 ### Cloud validation — Pasqal Cloud EMU_FREE, 500 shots per pulse
 
