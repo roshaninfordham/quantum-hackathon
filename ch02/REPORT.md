@@ -10,7 +10,13 @@ ramp, same graph, device envelope enforced.
 | Graph | Baseline (deck ramp, 4000 ns) | **Ours (GRAPE)** | Our T | Cloud (500 shots) |
 |---|---|---|---|---|
 | star K₁,₃ (α=3, unique MIS) | 0.727135 | **0.999998** | 1000 ns | **500/500 correct** |
-| cycle C₅ (α=2, 5 MIS's) | 0.657049 | **0.999999** | 2000 ns | see cloud_results |
+| cycle C₅ (α=2, 5 MIS's) | 0.657049 | **0.999999** | 1000/2000 ns | **500/500 + 500/500 correct** |
+
+Cloud total: **1500/1500 shots returned an optimal independent set.** The
+C₅ counts split near-uniformly across all five valid answers
+(114/98/97/96/95 at 1000 ns) — the machine samples the full solution
+manifold, matching the designed 0.200-per-solution state (χ² consistent
+with uniform).
 
 Success condition (P_MIS strictly above baseline) exceeded by ~0.27/0.34
 absolute. Both sweeps also run 2–4× faster than the baseline, which under
