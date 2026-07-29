@@ -5,3 +5,4 @@ __pycache__/
 # never commit auth material
 pasqal_auth.json
 *.token
+*.npz
