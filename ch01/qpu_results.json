@@ -1,0 +1,20 @@
+{
+ "batch_id": "a1a4d5e8-b3d1-4e74-be6a-6b2ebb366e34",
+ "device": "FRESNEL_CAN1",
+ "pulse": "v3_r5.0_T260.npz",
+ "runs": 500,
+ "status": "DONE",
+ "counts": {
+  "01": 232,
+  "10": 215,
+  "00": 41,
+  "11": 12
+ },
+ "pops": {
+  "P_gg": 0.082,
+  "P_gr": 0.464,
+  "P_rg": 0.43,
+  "P_rr": 0.024
+ },
+ "P_bell": 0.894
+}

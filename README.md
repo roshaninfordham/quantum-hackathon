@@ -15,7 +15,7 @@ inside the real device's published limits — validated on Pasqal Cloud.
 | **Ours, time-optimal (224 / 420 ns — 6–11× shorter)** | **0.999999** | **0.999998** | [docs/06-time-optimal.md](docs/06-time-optimal.md) |
 | **Ours, hardware-true smooth (v3, FRESNEL envelope)** | **1.000000** | **1.000000** | [docs/07-hardware.md](docs/07-hardware.md) |
 | Cloud validation (500 shots ea.) | ✅ | ✅ | [cloud_results](ch01/cloud_results_EMU_FREE.json) |
-| **Real QPU run (FRESNEL_CAN1, 500 shots)** | submitted — [batch](ch01/qpu_batch.json) | n/a (lattice can't form 6.5 µm) | [docs/07-hardware.md §4](docs/07-hardware.md) |
+| **Real QPU run (FRESNEL_CAN1, 500 shots)** | **P_bell = 0.894 measured** | n/a (lattice can't form 6.5 µm) | [qpu_results](ch01/qpu_results.json) · [docs/07 §4](docs/07-hardware.md) |
 
 ![Results](ch01/ch01_results.png)
 
