@@ -1,0 +1,238 @@
+#!/usr/bin/env python3
+"""Challenge 01 slide deck -> CH01_slides.pdf (16:9, matplotlib-rendered).
+
+Every figure is the committed evidence PNG; every number matches the repo.
+Regenerate: .venv/bin/python ch01/make_slides_ch01.py
+"""
+
+import json
+
+import matplotlib
+import numpy as np
+
+matplotlib.use("Agg")
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+
+INK = "#16161d"
+ACCENT = "#0f766e"
+GOOD = "#15803d"
+BAD = "#b91c1c"
+MUTED = "#6b7280"
+BG = "#fbfaf7"
+
+W, H = 13.333, 7.5   # 16:9 inches
+
+
+def new_slide(title, kicker=None):
+    fig = plt.figure(figsize=(W, H))
+    fig.patch.set_facecolor(BG)
+    if kicker:
+        fig.text(0.055, 0.945, kicker.upper(), fontsize=11, color=ACCENT,
+                 fontweight="bold", family="monospace")
+    fig.text(0.055, 0.865, title, fontsize=26, color=INK, fontweight="bold")
+    fig.text(0.055, 0.032, "Team 6 · Harmoniqs x Pasqal x Microsoft · July 29 2026",
+             fontsize=8, color=MUTED)
+    fig.text(0.945, 0.032, "github.com/roshaninfordham/quantum-hackathon",
+             fontsize=8, color=MUTED, ha="right")
+    return fig
+
+
+def bullets(fig, items, x=0.055, y=0.76, dy=0.072, fs=14, color=INK, wrap=None):
+    for text in items:
+        marker, body = ("", text)
+        fig.text(x, y, "–", fontsize=fs, color=ACCENT, fontweight="bold")
+        fig.text(x + 0.022, y, body, fontsize=fs, color=color, va="top",
+                 linespacing=1.3)
+        y -= dy + body.count("\n") * fs * 0.0024
+    return y
+
+
+def image_panel(fig, path, rect, caption=None):
+    ax = fig.add_axes(rect)
+    ax.imshow(mpimg.imread(path))
+    ax.axis("off")
+    if caption:
+        fig.text(rect[0] + rect[2] / 2, rect[1] - 0.028, caption,
+                 fontsize=9.5, color=MUTED, ha="center")
+    return ax
+
+
+pdf = PdfPages("CH01_slides.pdf")
+
+# ── 1 · title ────────────────────────────────────────────────────────────
+fig = plt.figure(figsize=(W, H)); fig.patch.set_facecolor(BG)
+fig.text(0.5, 0.62, "Entangling two atoms\nwith one global laser pulse",
+         fontsize=34, color=INK, fontweight="bold", ha="center", linespacing=1.3)
+fig.text(0.5, 0.44, "Challenge 01 — solved, cloud-validated, run on the real quantum computer",
+         fontsize=15, color=ACCENT, ha="center")
+fig.text(0.5, 0.30, "Fidelity 0.9926 / 0.7500 (baseline)   →   1.000000 / 1.000000 (ours)\n"
+                    "Real atoms: 89.4% of 500 shots entangled",
+         fontsize=14, color=INK, ha="center", linespacing=1.6)
+fig.text(0.5, 0.12, "Team 6 · A Real Quantum Hackathon · Harmoniqs x Pasqal x Microsoft",
+         fontsize=11, color=MUTED, ha="center")
+pdf.savefig(fig); plt.close(fig)
+
+# ── 2 · the problem ─────────────────────────────────────────────────────
+fig = new_slide("The problem, in one slide", "challenge 01")
+bullets(fig, [
+    "Two atoms, 5.0 or 6.5 micrometers apart. One laser shines on both — we cannot address them individually.",
+    "Goal state:  |Ψ⁺⟩ = (|gr⟩ + |rg⟩)/√2  — exactly one atom excited, shared between both. That is entanglement.",
+    "Our only controls: laser power Ω(t) and laser frequency offset δ(t), over at most 6000 ns.",
+    "Score:  F = |⟨Ψ⁺|ψ(T)⟩|²  — how close the final state is to the goal (1.0 = perfect).",
+    "Success = beat the starter pulse at BOTH spacings, inside the machine's published limits.",
+], y=0.74, dy=0.105, fs=15)
+fig.text(0.055, 0.16, "Physics we exploit: two nearby excited atoms repel (V = C₆/r⁶). "
+         "Inside the blockade radius R_b ≈ 7.2 µm, double excitation is forbidden — "
+         "that forbidden-ness is what creates entanglement.",
+         fontsize=13, color=ACCENT, style="italic", wrap=True)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 3 · the baseline and the gap ─────────────────────────────────────────
+fig = new_slide("The starter pulse works at one spacing, fails at the other", "the gap")
+bullets(fig, [
+    "Baseline: constant power Ω = 2π×1 MHz for 352 ns, no frequency shaping.",
+    "At r₁ = 5.0 µm the blockade is strong (V/Ω = 8.8):  F = 0.9926. Fine.",
+    "At r₂ = 6.5 µm the blockade is weak (V/Ω = 1.83):  F = 0.7500. Broken.",
+    "Where does 25% go? Into the forbidden |rr⟩ state — 22% leaks straight through the weak blockade.",
+], y=0.74, dy=0.10, fs=15)
+fig.text(0.055, 0.24, "One number — V/Ω, interaction over drive — explains the whole gap.\n"
+         "V is fixed by the atom spacing. But Ω is OURS to choose.",
+         fontsize=16, color=INK, fontweight="bold", linespacing=1.5)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 4 · see the failure ──────────────────────────────────────────────────
+fig = new_slide("Watch the baseline fail — then watch ours not", "evidence")
+image_panel(fig, "fig_dynamics_r2.png", [0.06, 0.24, 0.88, 0.56],
+            "x-axis: time during the pulse (µs) · y-axis: probability of each atomic configuration")
+bullets(fig, [
+    "Left (baseline): the red curve is the forbidden |rr⟩ state filling up to 22% — the green target stalls at 0.75.",
+    "Right (ours): red stays at zero for the whole pulse; the green target reaches 1.0.",
+], y=0.155, dy=0.055, fs=12.5)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 5 · the one-knob experiment ──────────────────────────────────────────
+fig = new_slide("The fix is one knob: slow down to restore the blockade", "hypothesis test")
+image_panel(fig, "fig_omega_sweep.png", [0.08, 0.15, 0.5, 0.62],
+            "x-axis: blockade strength V/Ω (log) · y-axis: fidelity F")
+bullets(fig, [
+    "Same square pulse, only Ω lowered\n(pulse lengthened to match).",
+    "F climbs monotonically with V/Ω\nand crosses 0.99 at V/Ω ≈ 9.",
+    "That became our design rule — and\nthe 6000 ns budget makes it free:\nthe baseline used only 352 ns.",
+    "On top: smooth ramps + a tiny δ\nthat cancels the energy shift Ω²/2V.",
+], x=0.62, y=0.74, dy=0.11, fs=12.5)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 6 · main results ────────────────────────────────────────────────────
+fig = new_slide("Result: both spacings beaten, validated on Pasqal Cloud", "results")
+image_panel(fig, "ch01_results.png", [0.05, 0.13, 0.9, 0.65],
+            "top: our pulse shapes (x: time; blue: power Ω, red: frequency δ) · "
+            "bottom-left: fidelity bars vs baseline · bottom-right: cloud shots (dots) vs simulation (circles)")
+fig.text(0.055, 0.795, "Every pulse validated by the device's own contract checker, then 500 shots each on Pasqal Cloud.",
+         fontsize=12.5, color=INK)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 7 · robustness ───────────────────────────────────────────────────────
+fig = new_slide("Bonus: one pulse that tolerates 30% spacing error", "product angle")
+image_panel(fig, "fig_robustness.png", [0.08, 0.15, 0.5, 0.62],
+            "x-axis: atom spacing r (µm) · y-axis: fidelity F of ONE fixed pulse")
+bullets(fig, [
+    "Real machines place atoms imperfectly.",
+    "We optimized a single waveform for\nthe worst case over the whole band.",
+    "Blue: our fixed pulse holds F > 0.997\nfrom 5.0 to 6.5 µm.",
+    "Grey: the baseline collapses to 0.55.",
+    "One calibration instead of one per\ngeometry — that is the product.",
+], x=0.62, y=0.74, dy=0.098, fs=12.5)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 8 · speed limit ─────────────────────────────────────────────────────
+fig = new_slide("Then we asked: how fast can the best pulse be?", "quantum speed limit")
+image_panel(fig, "fig_time_frontier.png", [0.05, 0.15, 0.62, 0.6],
+            "left — x-axis: pulse duration (ns) · y-axis: error 1−F (log) · right — the winning waveforms")
+bullets(fig, [
+    "Theory bound: T = π/(√2·Ωmax)\n= 177 ns. No pulse can be faster.",
+    "We reach F = 0.999999 at 224 ns\n(r₁) — 25 ns above the bound.",
+    "At r₂ the weak blockade sets its\nown wall near 420 ns — a measured\nspeed limit, itself a result.",
+    "Whole frontier: 5.4 s of laptop\ncompute (exact 3-state model +\nanalytic gradients).",
+], x=0.70, y=0.72, dy=0.125, fs=12.5)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 9 · noise flips the ranking ──────────────────────────────────────────
+fig = new_slide("Under real noise, the ranking flips — shorter wins", "hardware realism")
+rows = json.load(open("noise_ranking.json"))
+ax = fig.add_axes([0.08, 0.16, 0.55, 0.58])
+labels, noiseless, noisy = [], [], []
+for r in rows:
+    if r["r"] == 6.5:
+        labels.append(r["label"].split(" @")[0])
+        noiseless.append(r["F_noiseless"]); noisy.append(r["F_noisy"])
+x = np.arange(len(labels)); w = 0.38
+ax.bar(x - w/2, noiseless, w, color="#cbd5e1", label="noiseless emulator")
+ax.bar(x + w/2, noisy, w, color=ACCENT, label="with decay + dephasing")
+for xi in range(len(labels)):
+    ax.text(xi + w/2, noisy[xi] + .015, f"{noisy[xi]:.2f}", ha="center", fontsize=9)
+ax.set_xticks(x, labels, fontsize=10); ax.set_ylim(0, 1.1)
+ax.set_ylabel("fidelity F at r₂ = 6.5 µm"); ax.legend(fontsize=9)
+ax.set_title("x-axis: pulse design · y-axis: fidelity, without vs with noise", fontsize=10, color=MUTED)
+bullets(fig, [
+    "Dephasing accumulates with time:\nthe 2.7-µs pulse loses 0.27 of F.",
+    "The 420-ns pulse keeps 0.93.",
+    "Design law: pulse duration IS the\nnoise coupling. Minimize T first.",
+    "This is why we sent the short,\nsmooth pulse to the real machine.",
+], x=0.68, y=0.70, dy=0.12, fs=12.5)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 10 · real QPU: what the atoms answered ───────────────────────────────
+fig = new_slide("500 shots on the real machine: 89.4% entangled", "real atoms · FRESNEL_CAN1")
+image_panel(fig, "screenshots/pasqal_qpu_bitstrings.png", [0.04, 0.13, 0.56, 0.65],
+            "Pasqal's own portal · x-axis: measured two-atom outcome · y-axis: % of 500 shots")
+bullets(fig, [
+    "The two tall bars ARE the Bell state:\n'01' 46% + '10' 43% = 89.4% —\nexactly one atom excited.",
+    "They are equal (within noise): the\nsymmetry physics demands, delivered.",
+    "'11' (blockade violation): 2.4% —\nforbidden stayed forbidden.",
+    "'00' 8%: readout/decay, the channel\nour noise model predicted.",
+    "Pre-registered window: hit.",
+], x=0.63, y=0.76, dy=0.095, fs=12)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 11 · real QPU: the pulse the machine played ──────────────────────────
+fig = new_slide("The machine's dashboard shows our physics back to us", "real atoms · the pulse")
+image_panel(fig, "screenshots/pasqal_qpu_pulse.png", [0.04, 0.13, 0.56, 0.65],
+            "Pasqal portal, Pulses tab · x-axis: time (ns) · purple: laser power Ω(t) · white: detuning δ(t)")
+bullets(fig, [
+    "260 nanoseconds, start to finish.",
+    "Power rises smoothly from zero —\nno jumps (the hardware-true 'v3'\npulse our scientists asked for).",
+    "The portal labels the pulse area:\n5π/7 ≈ 0.714π.",
+    "A two-atom collective π-pulse\nneeds area π/√2 ≈ 0.707π.",
+    "The √2 collective enhancement,\non the machine's own UI, to 1%.",
+], x=0.63, y=0.76, dy=0.095, fs=12)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 12 · closing numbers ─────────────────────────────────────────────────
+fig = new_slide("Challenge 01 — the score sheet", "summary")
+tbl = [
+    ("", "r₁ = 5.0 µm", "r₂ = 6.5 µm", "duration"),
+    ("Baseline (starter pulse)", "0.9926", "0.7500", "352 ns"),
+    ("v1 · simple analytic (4 params)", "0.99990", "0.99944", "~2400 ns"),
+    ("v1r · one spacing-robust pulse", "0.99944", "0.99701", "2400 ns"),
+    ("v2 · time-optimal (at the QSL)", "0.999999", "0.999998", "224 / 420 ns"),
+    ("v3 · hardware-true smooth", "1.000000", "1.000000", "352 / 600 ns"),
+]
+y = 0.72
+for i, row in enumerate(tbl):
+    bold = "bold" if i in (0, 5) else "normal"
+    color = INK if i != 5 else GOOD
+    for text, xx, ww in zip(row, (0.06, 0.47, 0.63, 0.80), (None,)*4):
+        fig.text(xx, y, text, fontsize=13.5, color=color, fontweight=bold)
+    y -= 0.062
+y -= 0.02
+bullets(fig, [
+    "Cloud: 7 pulses × 500 shots — every population within shot noise of prediction.",
+    "Real QPU: P_bell = 0.894, inside the window we published BEFORE the run.",
+    "Every number in this deck regenerates from the public repo in minutes.",
+], y=y, dy=0.075, fs=14)
+pdf.savefig(fig); plt.close(fig)
+
+pdf.close()
+print("wrote CH01_slides.pdf (12 slides)")
