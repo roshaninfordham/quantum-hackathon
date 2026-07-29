@@ -1,0 +1,7 @@
+{
+ "batch_id": "a1a4d5e8-b3d1-4e74-be6a-6b2ebb366e34",
+ "device": "FRESNEL_CAN1",
+ "pulse": "v3_r5.0_T260.npz",
+ "runs": 500,
+ "status": "PENDING"
+}
