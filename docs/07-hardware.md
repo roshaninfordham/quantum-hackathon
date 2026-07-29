@@ -114,6 +114,26 @@ Their 377 ns minimum-time point sits exactly on our measured frontier —
 two independent solvers, one physical speed limit. Their README's pending
 item (slope/acceleration-bounded re-solve) is delivered here as v3.
 
+## 6. Beyond populations: certifying entanglement (future work, costed)
+
+Populations cannot distinguish |Ψ⁺⟩ from a classical 50/50 mixture of
+|gr⟩ and |rg⟩ ([05-methods §8](05-methods.md)). Two upgrades, honestly
+assessed:
+
+- **Bell-inequality (CHSH) violation: not implementable here at any shot
+  count.** CHSH needs each atom measured along its *own* rotated axis;
+  our drive is global, so only same-angle correlators E(θ,θ) exist — no
+  CHSH combination can be formed. (With local addressing and our measured
+  visibility ~0.8, S ≈ 2.26 would need ~1,400 shots for 3σ; a perfect
+  state needs only ~105.)
+- **Entanglement witness via parity oscillation: one more 500-shot job.**
+  Append a global π/2 analysis pulse with swept phase; the |gr⟩↔|rg⟩
+  coherence appears as a parity oscillation, and F > 0.5 certifies genuine
+  entanglement (standard Sackett-et-al. protocol; global drive suffices).
+  At our F ≈ 0.89 the 3σ certification needs only ~10² shots — one job
+  upgrades the claim from "populations match" to "entanglement certified
+  on real atoms."
+
 ## Answers to doc 06's open questions
 
 1. **Noise model ranking** → done (§1): short wins; v2/v3 are the hardware
