@@ -2,7 +2,7 @@
 
 This is the lab-notebook document: every reported number traced to the code
 that produced it, every parameter listed, every derivation shown. Companion
-code: [`ch01/score.py`](../ch01/score.py) (the only scorer in the project).
+code: [`ch01/score.py`](../../ch01/score.py) (the only scorer in the project).
 
 ## 0. Number provenance map
 
@@ -75,7 +75,7 @@ Two limits of this 3-level ladder:
   Δ_W ≈ (Ω√2/2)²/V = **Ω²/2V** (2nd-order perturbation theory in the
   coupling to |rr⟩, detuned by V), detuning the |gg⟩↔|W⟩ transition.
 
-![dynamics](../ch01/fig_dynamics_r2.png)
+![dynamics](../../ch01/fig_dynamics_r2.png)
 
 ## 3. Baseline reproduction (the numbers to beat)
 
@@ -111,7 +111,7 @@ F is monotone in V/Ω and crosses the r₁ baseline (0.9926) at V/Ω ≈ 9 —
 hypothesis confirmed; **V/Ω ≥ 9** became the design rule. The device's 6 µs
 cap admits Ω down to ~2π×0.06 MHz, so the rule is affordable at both spacings.
 
-![sweep](../ch01/fig_omega_sweep.png)
+![sweep](../../ch01/fig_omega_sweep.png)
 
 ## 5. The pulse family and the optimizer
 
@@ -177,7 +177,7 @@ The robust waveform was optimized on the two endpoints only; the interior
 holds ≥ 0.997 because a slow smooth pulse is *physically* robust (blockade
 deep everywhere in the band), not because we tuned every point.
 
-![robustness](../ch01/fig_robustness.png)
+![robustness](../../ch01/fig_robustness.png)
 
 ## 8. Cloud validation protocol
 

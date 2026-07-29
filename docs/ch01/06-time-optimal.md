@@ -69,7 +69,7 @@ Command: `.venv/bin/python ch01/fast_opt.py` · data: `ch01/time_frontier.json`
 | 420 | 1.000000 | **0.999998** |
 | 500 | 1.000000 | 1.000000 |
 
-![frontier](../ch01/fig_time_frontier.png)
+![frontier](../../ch01/fig_time_frontier.png)
 
 Readings:
 

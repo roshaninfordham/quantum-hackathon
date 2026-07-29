@@ -12,10 +12,10 @@ inside the real device's published limits — validated on Pasqal Cloud.
 | Reference pulse (baseline) | 0.992564 | 0.750003 | [score.py](ch01/score.py) |
 | **Ours, per-spacing** | **0.999895** | **0.999435** | [REPORT.md](ch01/REPORT.md) |
 | **Ours, one robust waveform** | **0.999443** | **0.997008** | [fig_robustness.png](ch01/fig_robustness.png) |
-| **Ours, time-optimal (224 / 420 ns — 6–11× shorter)** | **0.999999** | **0.999998** | [docs/06-time-optimal.md](docs/06-time-optimal.md) |
-| **Ours, hardware-true smooth (v3, FRESNEL envelope)** | **1.000000** | **1.000000** | [docs/07-hardware.md](docs/07-hardware.md) |
+| **Ours, time-optimal (224 / 420 ns — 6–11× shorter)** | **0.999999** | **0.999998** | [docs/ch01/06-time-optimal.md](docs/ch01/06-time-optimal.md) |
+| **Ours, hardware-true smooth (v3, FRESNEL envelope)** | **1.000000** | **1.000000** | [docs/ch01/07-hardware.md](docs/ch01/07-hardware.md) |
 | Cloud validation (500 shots ea.) | ✅ | ✅ | [cloud_results](ch01/cloud_results_EMU_FREE.json) |
-| **Real QPU run (FRESNEL_CAN1, 500 shots)** | **P_bell = 0.894 measured** | n/a (lattice can't form 6.5 µm) | [qpu_results](ch01/qpu_results.json) · [docs/07 §4](docs/07-hardware.md) |
+| **Real QPU run (FRESNEL_CAN1, 500 shots)** | **P_bell = 0.894 measured** | n/a (lattice can't form 6.5 µm) | [qpu_results](ch01/qpu_results.json) · [docs/ch01/07 §4](docs/ch01/07-hardware.md) |
 
 ![Results](ch01/ch01_results.png)
 
@@ -26,39 +26,39 @@ inside the real device's published limits — validated on Pasqal Cloud.
 **1 · The qubit.** Each atom is a two-level system: ground |g⟩ and a highly
 excited *Rydberg* state |r⟩. A laser couples them with Rabi frequency Ω(t)
 (how hard we drive) and detuning δ(t) (how far off-resonance). Both knobs are
-**global** — every atom sees the same light. *→ [docs/01-challenge.md](docs/01-challenge.md)*
+**global** — every atom sees the same light. *→ [docs/ch01/01-challenge.md](docs/ch01/01-challenge.md)*
 
 **2 · The interaction.** Two atoms in |r⟩ repel: energy V = C₆/r⁶. At close
 spacing this shift is so large the laser cannot excite both — the **Rydberg
 blockade**. Blockade radius R_b ≈ 7.2 µm here; both our spacings sit inside it,
-but not equally deep. *→ [docs/01-challenge.md](docs/01-challenge.md)*
+but not equally deep. *→ [docs/ch01/01-challenge.md](docs/ch01/01-challenge.md)*
 
 **3 · Why blockade creates entanglement.** Driving both atoms from |gg⟩, the
 blockade forbids |rr⟩, so the system oscillates between |gg⟩ and the *shared*
 single excitation (|gr⟩+|rg⟩)/√2 — which **is** the Bell state we're asked
 for. The oscillation runs √2 faster than a single atom (both atoms reach for
 the same photon). Stop at the π-pulse time T = π/(√2Ω): done.
-*→ [docs/02-physics.md](docs/02-physics.md), derivation in [docs/05-methods.md §2](docs/05-methods.md)*
+*→ [docs/ch01/02-physics.md](docs/ch01/02-physics.md), derivation in [docs/ch01/05-methods.md §2](docs/ch01/05-methods.md)*
 
 **4 · Why the baseline breaks at r₂ — the one number that matters.** Blockade
 quality is the ratio **V/Ω**. The reference pulse (Ω = 2π×1 MHz) gives
 V/Ω = 8.8 at r₁ (fine: F = 0.993) but **1.83** at r₂ — the "forbidden" |rr⟩
 takes 22% of the population and F collapses to 0.75. See it happen:
 [fig_dynamics_r2.png](ch01/fig_dynamics_r2.png).
-*→ single-knob proof: [fig_omega_sweep.png](ch01/fig_omega_sweep.png), [docs/05-methods.md §4](docs/05-methods.md)*
+*→ single-knob proof: [fig_omega_sweep.png](ch01/fig_omega_sweep.png), [docs/ch01/05-methods.md §4](docs/ch01/05-methods.md)*
 
 **5 · The fix.** V is fixed by geometry, but Ω is ours: slow down (V/Ω ≥ 9),
 smooth the edges (sin² ramps), and cancel the small energy shift of the target
 state with δ(t) — a shift our optimizer rediscovered to three digits of the
 perturbation-theory value Ω²/2V. Result: ≥ 0.9994 at both spacings.
-*→ [docs/02-physics.md](docs/02-physics.md), all parameters in [docs/05-methods.md §5](docs/05-methods.md)*
+*→ [docs/ch01/02-physics.md](docs/ch01/02-physics.md), all parameters in [docs/ch01/05-methods.md §5](docs/ch01/05-methods.md)*
 
 **6 · Then make it fast.** Slowing down costs coherence on real hardware. Using
 optimal control (GRAPE with exact adjoint gradients on the exact 3-state
 symmetric model — the full 16-point time–fidelity frontier computes in 5.4 s),
 we push to the quantum speed limit: **F = 0.999999 at 224 ns (r₁) and 420 ns
 (r₂)** — 6–11× shorter than step 5, near the theoretical bound T = π/(√2·Ω_max)
-= 177 ns. *→ [docs/06-time-optimal.md](docs/06-time-optimal.md), frontier:
+= 177 ns. *→ [docs/ch01/06-time-optimal.md](docs/ch01/06-time-optimal.md), frontier:
 [fig_time_frontier.png](ch01/fig_time_frontier.png)*
 
 **7 · Then make it real.** Under a Lindblad noise model (Rydberg decay + laser
@@ -67,7 +67,7 @@ dephasing) the ranking flips: slow pulses collapse to F ≈ 0.73, short ones kee
 FRESNEL envelope with slew-limited smooth shapes (the scientist's "don't shoot
 up"), and sent the winner to the **actual quantum computer** — 500 shots on
 FRESNEL_CAN1, two atoms on the calibrated lattice.
-*→ [docs/07-hardware.md](docs/07-hardware.md); independent Julia/Piccolo
+*→ [docs/ch01/07-hardware.md](docs/ch01/07-hardware.md); independent Julia/Piccolo
 cross-validation in [piccolo-solutions/](piccolo-solutions/)*
 
 ---
@@ -76,10 +76,10 @@ cross-validation in [piccolo-solutions/](piccolo-solutions/)*
 
 | You are… | Read, in order |
 |---|---|
-| **Anyone** (10 min) | this page → [02-physics](docs/02-physics.md) |
-| **Reviewing the science** | [05-methods](docs/05-methods.md) — every number traced to source, derivations, error analysis — then [06-time-optimal](docs/06-time-optimal.md) for the speed-limit study |
-| **Reviewing the engineering** | [03-process](docs/03-process.md) → [ch01/score.py](ch01/score.py) → [ch01/submit_ch01.py](ch01/submit_ch01.py) |
-| **Asking "so what?"** | [04-product](docs/04-product.md) — geometry-robust entanglement as the product |
+| **Anyone** (10 min) | this page → [02-physics](docs/ch01/02-physics.md) |
+| **Reviewing the science** | [05-methods](docs/ch01/05-methods.md) — every number traced to source, derivations, error analysis — then [06-time-optimal](docs/ch01/06-time-optimal.md) for the speed-limit study |
+| **Reviewing the engineering** | [03-process](docs/ch01/03-process.md) → [ch01/score.py](ch01/score.py) → [ch01/submit_ch01.py](ch01/submit_ch01.py) |
+| **Asking "so what?"** | [04-product](docs/ch01/04-product.md) — geometry-robust entanglement as the product |
 | **Judging the challenge** | [ch01/REPORT.md](ch01/REPORT.md) — the formal submission |
 
 ## Everything in this repo
