@@ -33,5 +33,29 @@
   },
   "P_MIS_measured": 1.0,
   "P_MIS_sim": 0.999998768516521
+ },
+ "crab_star_K13_T1000": {
+  "graph": "star_K13",
+  "batch_id": "06ffd349-6338-47cc-a9bb-9214df108be5",
+  "counts": {
+   "0111": 498,
+   "0010": 1,
+   "0100": 1
+  },
+  "P_MIS_measured": 0.996,
+  "P_MIS_sim": 0.9961883643281861
+ },
+ "crab_cycle_C5_T1000": {
+  "graph": "cycle_C5",
+  "batch_id": "b8592f18-dd88-4dcd-a03c-85352ff5bda1",
+  "counts": {
+   "00101": 112,
+   "10010": 108,
+   "01001": 85,
+   "10100": 106,
+   "01010": 89
+  },
+  "P_MIS_measured": 1.0,
+  "P_MIS_sim": 0.9993873982207475
  }
 }
