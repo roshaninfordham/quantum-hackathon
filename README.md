@@ -45,6 +45,9 @@ docs/
   02-physics.md          why the baseline fails, why our fix is simple
   03-process.md          what we did, in order, with the decisions
   04-product.md          the commercial angle: geometry-robust entanglement
+  05-methods.md          METHODS & PROVENANCE — every number traced to source,
+                         derivations, parameters, stats — start here if you're
+                         reviewing the science
 skills/
   rydberg-bell-pulse/    the Amicode skill (recipe + traps + artifacts)
 ```
