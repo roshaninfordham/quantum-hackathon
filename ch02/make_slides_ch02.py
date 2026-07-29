@@ -9,6 +9,8 @@ import matplotlib
 import numpy as np
 
 matplotlib.use("Agg")
+matplotlib.rcParams["pdf.fonttype"] = 42
+matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
@@ -68,6 +70,20 @@ def atom(ax, x, y, on, r=0.42, label=None, blockade=None):
         ax.text(x, y - r - 0.45, label, ha="center", fontsize=10, color=INK)
 
 
+_slide_no = [0]
+
+
+def save(fig):
+    """One slide -> PDF page + PNG fallback (GitHub always renders PNGs)."""
+    _slide_no[0] += 1
+    pdf.savefig(fig)
+    import os
+    os.makedirs("slides_png", exist_ok=True)
+    fig.savefig(f"slides_png/slide_{_slide_no[0]:02d}.png", dpi=130,
+                facecolor=fig.get_facecolor())
+    plt.close(fig)
+
+
 pdf = PdfPages("CH02_slides.pdf")
 
 # ── 1 · title ────────────────────────────────────────────────────────────
@@ -81,7 +97,7 @@ fig.text(0.5, 0.34, "Success probability 0.727 / 0.657 (baseline)  →  0.999998
          fontsize=13.5, color=INK, ha="center", linespacing=1.7)
 fig.text(0.5, 0.12, "Team 6 · A Real Quantum Hackathon · Harmoniqs x Pasqal x Microsoft",
          fontsize=11, color=MUTED, ha="center")
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 2 · atoms are light switches ─────────────────────────────────────────
 fig = new_slide("First: an atom is just a light switch", "the basics")
@@ -97,7 +113,7 @@ bullets(fig, [
     "Our only two knobs, over time:\nΩ(t) = laser power, δ(t) = frequency offset.",
     "Plus one more freedom: WHERE we\nplace the atoms before we start.",
 ], x=0.53, y=0.74, dy=0.115, fs=13.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 3 · the puzzle (classroom analogy) ───────────────────────────────────
 fig = new_slide("The puzzle: seat the most people, no neighbors", "maximum independent set")
@@ -110,7 +126,7 @@ bullets(fig, [
 fig.text(0.055, 0.20, "We never check combinations one-by-one. The quantum system explores them together,\n"
          "and we shape the laser so the best answer is what the camera sees.",
          fontsize=14, color=ACCENT, fontweight="bold", linespacing=1.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 4 · distance = friendship (encoding) ────────────────────────────────
 fig = new_slide("How atoms become a graph: distance decides the edges", "the encoding")
@@ -128,7 +144,7 @@ bullets(fig, [
     "So we DRAW the puzzle with tweezers:\natom positions are the graph.",
     "We verified every distance in code —\nthe register is exactly the target graph.",
 ], x=0.63, y=0.74, dy=0.115, fs=12.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 5 · our two puzzles ─────────────────────────────────────────────────
 fig = new_slide("The two puzzles we were given", "the graphs")
@@ -151,7 +167,7 @@ ax2.text(0, -2.45, "PENTAGON: 5 in a ring.\nBest answer: any 2 non-neighbors ON 
          ha="center", fontsize=10, color=INK)
 fig.text(0.5, 0.79, "Score = P_MIS: the chance one photograph shows a best answer. Beat the starter sweep.",
          fontsize=13, color=ACCENT, ha="center", fontweight="bold")
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 6 · baseline + our method ────────────────────────────────────────────
 fig = new_slide("The starter sweep vs what we did", "method")
@@ -164,7 +180,7 @@ bullets(fig, [
 fig.text(0.055, 0.17, "Compute cost: all six optimizations ≈ 2 minutes on a laptop. Our sweeps are also 4× SHORTER\n"
          "than the baseline (1000 ns vs 4000 ns) — shorter = less time for real-world noise to corrupt the answer.",
          fontsize=12.5, color=ACCENT, style="italic", linespacing=1.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 7 · results ─────────────────────────────────────────────────────────
 fig = new_slide("Result: near-perfect on both puzzles", "results")
@@ -174,7 +190,7 @@ image_panel(fig, "fig_ch02_results.png", [0.04, 0.15, 0.92, 0.6],
 bullets(fig, [
     "Grey bars (baseline): 0.727 and 0.657.  Green bars (ours): 0.999998 and 0.999999.",
 ], y=0.13, dy=0.05, fs=13)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 8 · cloud validation ────────────────────────────────────────────────
 fig = new_slide("Pasqal Cloud: 1500 photographs, 1500 correct answers", "validation")
@@ -185,7 +201,7 @@ bullets(fig, [
     "That even split is a quantum signature: the machine doesn't pick one answer —\nit holds all five at once and samples them fairly.",
     "Pentagon (2000 ns): 500/500 again. Every batch ID is recorded in the repo for audit.",
 ], y=0.74, dy=0.11, fs=14)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 9 · low-bandwidth + transfer ─────────────────────────────────────────
 fig = new_slide("Then we asked: how simple can the winning sweep be?", "low bandwidth · transfer")
@@ -196,7 +212,7 @@ bullets(fig, [
     "FIVE knobs (vs 125) reach 0.996–0.999 — found in ~30 seconds, and smooth enough for any hardware.",
     "The same 5 knobs, re-used unchanged on bigger rings: still beat the baseline (+0.30 on the 9-ring).\nOn a structurally different random graph they lose — honest limit, stated as a finding.",
 ], y=0.135, dy=0.055, fs=12)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 10 · QPU bitstrings ─────────────────────────────────────────────────
 fig = new_slide("Real atoms, real answer: the machine drew our star", "real hardware · FRESNEL_CAN1")
@@ -209,7 +225,7 @@ bullets(fig, [
     "Real atoms solve the puzzle decisively\n— the right answer wins by 7×.",
     "Below our predicted 80–93% window:\nholding 3 fragile ON-atoms compounds\nreadout loss — we published the\nprediction first and the analysis after.",
 ], x=0.63, y=0.76, dy=0.105, fs=11.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 11 · QPU pulse ──────────────────────────────────────────────────────
 fig = new_slide("The sweep the machine actually played", "real hardware · the pulse")
@@ -221,7 +237,7 @@ bullets(fig, [
     "That tilt walks the atoms from\n'all OFF' to 'the best seating plan'.",
     "Bandwidth ≤ 1 MHz by construction —\nwell inside what the hardware can play.",
 ], x=0.63, y=0.76, dy=0.105, fs=11.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 11b · the metric + why it matters ───────────────────────────────────
 fig = new_slide("The score, and why anyone should care", "metric · commercial value")
@@ -240,7 +256,7 @@ bullets(fig, [
     "Our contribution scales: a 5-knob sweep, trained once on a small graph, re-used across a graph\nfamily at zero cost — the exact recipe Challenge 03's 80-atom instances need.",
     "Pasqal stack credit: Pulser device models + judge's simulator, free-tier cloud for 500-shot\nvalidation, and the FRESNEL_CAN1 QPU + portal for the real-atom evidence in this deck.",
 ], y=0.36, dy=0.095, fs=12.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 12 · score sheet ─────────────────────────────────────────────────────
 fig = new_slide("Challenge 02 — the score sheet", "summary")
@@ -265,7 +281,7 @@ bullets(fig, [
     "Five equally-valid pentagon answers, sampled evenly — a visibly quantum result.",
     "Everything regenerates from the public repo: scorer, optimizer, figures, batch IDs.",
 ], y=y, dy=0.07, fs=13.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 pdf.close()
 print("wrote CH02_slides.pdf (12 slides)")

@@ -11,6 +11,8 @@ import matplotlib
 import numpy as np
 
 matplotlib.use("Agg")
+matplotlib.rcParams["pdf.fonttype"] = 42
+matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
@@ -59,6 +61,20 @@ def image_panel(fig, path, rect, caption=None):
     return ax
 
 
+_slide_no = [0]
+
+
+def save(fig):
+    """One slide -> PDF page + PNG fallback (GitHub always renders PNGs)."""
+    _slide_no[0] += 1
+    pdf.savefig(fig)
+    import os
+    os.makedirs("slides_png", exist_ok=True)
+    fig.savefig(f"slides_png/slide_{_slide_no[0]:02d}.png", dpi=130,
+                facecolor=fig.get_facecolor())
+    plt.close(fig)
+
+
 pdf = PdfPages("CH01_slides.pdf")
 
 # ── 1 · title ────────────────────────────────────────────────────────────
@@ -72,7 +88,7 @@ fig.text(0.5, 0.30, "Fidelity 0.9926 / 0.7500 (baseline)   →   1.000000 / 1.00
          fontsize=14, color=INK, ha="center", linespacing=1.6)
 fig.text(0.5, 0.12, "Team 6 · A Real Quantum Hackathon · Harmoniqs x Pasqal x Microsoft",
          fontsize=11, color=MUTED, ha="center")
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 2 · the problem ─────────────────────────────────────────────────────
 fig = new_slide("The problem, in one slide", "challenge 01")
@@ -87,7 +103,7 @@ fig.text(0.055, 0.16, "Physics we exploit: two nearby excited atoms repel (V = C
          "Inside the blockade radius R_b ≈ 7.2 µm, double excitation is forbidden — "
          "that forbidden-ness is what creates entanglement.",
          fontsize=13, color=ACCENT, style="italic", wrap=True)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 2b · the idea in one picture (newbie slide) ─────────────────────────
 from matplotlib.patches import Circle, FancyArrow  # noqa: E402
@@ -129,7 +145,7 @@ bullets(fig, [
     "Close atoms cannot both be ON\n(the blockade). So the pulse can\nonly put ONE excitation in —\nshared between the two atoms.",
     "That shared, both-options-at-once\nstate IS the Bell state we're scored on.",
 ], x=0.64, y=0.72, dy=0.13, fs=12.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 3 · the baseline and the gap ─────────────────────────────────────────
 fig = new_slide("The starter pulse works at one spacing, fails at the other", "the gap")
@@ -142,7 +158,7 @@ bullets(fig, [
 fig.text(0.055, 0.24, "One number — V/Ω, interaction over drive — explains the whole gap.\n"
          "V is fixed by the atom spacing. But Ω is OURS to choose.",
          fontsize=16, color=INK, fontweight="bold", linespacing=1.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 4 · see the failure ──────────────────────────────────────────────────
 fig = new_slide("Watch the baseline fail — then watch ours not", "evidence")
@@ -152,7 +168,7 @@ bullets(fig, [
     "Left (baseline): the red curve is the forbidden |rr⟩ state filling up to 22% — the green target stalls at 0.75.",
     "Right (ours): red stays at zero for the whole pulse; the green target reaches 1.0.",
 ], y=0.155, dy=0.055, fs=12.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 5 · the one-knob experiment ──────────────────────────────────────────
 fig = new_slide("The fix is one knob: slow down to restore the blockade", "hypothesis test")
@@ -164,7 +180,7 @@ bullets(fig, [
     "That became our design rule — and\nthe 6000 ns budget makes it free:\nthe baseline used only 352 ns.",
     "On top: smooth ramps + a tiny δ\nthat cancels the energy shift Ω²/2V.",
 ], x=0.62, y=0.74, dy=0.11, fs=12.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 6 · main results ────────────────────────────────────────────────────
 fig = new_slide("Result: both spacings beaten, validated on Pasqal Cloud", "results")
@@ -173,7 +189,7 @@ image_panel(fig, "ch01_results.png", [0.05, 0.13, 0.9, 0.65],
             "bottom-left: fidelity bars vs baseline · bottom-right: cloud shots (dots) vs simulation (circles)")
 fig.text(0.055, 0.795, "Every pulse validated by the device's own contract checker, then 500 shots each on Pasqal Cloud.",
          fontsize=12.5, color=INK)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 7 · robustness ───────────────────────────────────────────────────────
 fig = new_slide("Bonus: one pulse that tolerates 30% spacing error", "product angle")
@@ -186,7 +202,7 @@ bullets(fig, [
     "Grey: the baseline collapses to 0.55.",
     "One calibration instead of one per\ngeometry — that is the product.",
 ], x=0.62, y=0.74, dy=0.098, fs=12.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 8 · speed limit ─────────────────────────────────────────────────────
 fig = new_slide("Then we asked: how fast can the best pulse be?", "quantum speed limit")
@@ -198,7 +214,7 @@ bullets(fig, [
     "At r₂ the weak blockade sets its\nown wall near 420 ns — a measured\nspeed limit, itself a result.",
     "Whole frontier: 5.4 s of laptop\ncompute (exact 3-state model +\nanalytic gradients).",
 ], x=0.70, y=0.72, dy=0.125, fs=12.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 9 · noise flips the ranking ──────────────────────────────────────────
 fig = new_slide("Under real noise, the ranking flips — shorter wins", "hardware realism")
@@ -223,7 +239,7 @@ bullets(fig, [
     "Design law: pulse duration IS the\nnoise coupling. Minimize T first.",
     "This is why we sent the short,\nsmooth pulse to the real machine.",
 ], x=0.68, y=0.70, dy=0.12, fs=12.5)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 10 · real QPU: what the atoms answered ───────────────────────────────
 fig = new_slide("500 shots on the real machine: 89.4% entangled", "real atoms · FRESNEL_CAN1")
@@ -236,7 +252,7 @@ bullets(fig, [
     "'00' 8%: readout/decay, the channel\nour noise model predicted.",
     "Pre-registered window: hit.",
 ], x=0.63, y=0.76, dy=0.095, fs=12)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 11 · real QPU: the pulse the machine played ──────────────────────────
 fig = new_slide("The machine's dashboard shows our physics back to us", "real atoms · the pulse")
@@ -249,7 +265,7 @@ bullets(fig, [
     "A two-atom collective π-pulse\nneeds area π/√2 ≈ 0.707π.",
     "The √2 collective enhancement,\non the machine's own UI, to 1%.",
 ], x=0.63, y=0.76, dy=0.095, fs=12)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 11b · how the score is computed ──────────────────────────────────────
 fig = new_slide("How the score is computed — no magic", "the metric")
@@ -265,7 +281,7 @@ fig.text(0.30, 0.185, "1.000000", fontsize=42, color=GOOD, ha="center", fontweig
 fig.text(0.30, 0.125, "our best F, both spacings (simulation)", fontsize=11, color=MUTED, ha="center")
 fig.text(0.70, 0.185, "89.4%", fontsize=42, color=ACCENT, ha="center", fontweight="bold")
 fig.text(0.70, 0.125, "entangled shots on the real machine (500 photos)", fontsize=11, color=MUTED, ha="center")
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 11c · why it matters + the Pasqal stack ──────────────────────────────
 fig = new_slide("Why this matters beyond the score", "commercial value")
@@ -281,7 +297,7 @@ bullets(fig, [
     "Pasqal Cloud free emulator — 500-shot validation of every pulse before spending hardware budget.",
     "FRESNEL_CAN1 QPU — the real-atom runs; the portal's register/pulse/bitstring views made every\nresult inspectable by anyone (see the screenshots in this deck).",
 ], y=0.255, dy=0.062, fs=12)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 # ── 12 · closing numbers ─────────────────────────────────────────────────
 fig = new_slide("Challenge 01 — the score sheet", "summary")
@@ -306,7 +322,7 @@ bullets(fig, [
     "Real QPU: P_bell = 0.894, inside the window we published BEFORE the run.",
     "Every number in this deck regenerates from the public repo in minutes.",
 ], y=y, dy=0.075, fs=14)
-pdf.savefig(fig); plt.close(fig)
+save(fig)
 
 pdf.close()
 print("wrote CH01_slides.pdf (12 slides)")
