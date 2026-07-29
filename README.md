@@ -7,6 +7,9 @@ analog-mode Rydberg Hamiltonian, driven by a single global pulse
 (Ω(t), δ(t)) plus the atom positions. We iterate in exact simulation and
 validate on Pasqal Cloud — including one run on the real quantum computer.
 
+**→ Judges / presenters: start at [SUBMISSION.md](SUBMISSION.md) — the
+criteria-to-evidence score sheet, resource ledger, and slide outline.**
+
 ## Challenge index
 
 | | Status | Baseline → Ours | Evidence |
