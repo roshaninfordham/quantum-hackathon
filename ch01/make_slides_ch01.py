@@ -89,6 +89,48 @@ fig.text(0.055, 0.16, "Physics we exploit: two nearby excited atoms repel (V = C
          fontsize=13, color=ACCENT, style="italic", wrap=True)
 pdf.savefig(fig); plt.close(fig)
 
+# ── 2b · the idea in one picture (newbie slide) ─────────────────────────
+from matplotlib.patches import Circle, FancyArrow  # noqa: E402
+
+fig = new_slide("The idea in one picture", "for everyone")
+ax = fig.add_axes([0.04, 0.13, 0.55, 0.62])
+ax.set_xlim(-1, 12); ax.set_ylim(-3, 3.4); ax.set_aspect("equal"); ax.axis("off")
+
+
+def _atom(x, y, on, label=None):
+    ax.add_patch(Circle((x, y), 0.45, facecolor="#22c55e" if on else "#cbd5e1",
+                        edgecolor=INK, lw=1.4, zorder=3))
+    ax.text(x, y, "ON" if on else "OFF", ha="center", va="center", fontsize=8,
+            fontweight="bold", color="white" if on else MUTED, zorder=4)
+    if label:
+        ax.text(x, y - 0.95, label, ha="center", fontsize=9, color=INK)
+
+
+# left: start
+_atom(1.0, 1.5, False, "atom A"); _atom(3.2, 1.5, False, "atom B")
+ax.add_patch(Circle((1.0, 1.5), 1.55, fill=False, ls="--", edgecolor=ACCENT, lw=1.1, alpha=0.7))
+ax.add_patch(Circle((3.2, 1.5), 1.55, fill=False, ls="--", edgecolor=ACCENT, lw=1.1, alpha=0.7))
+ax.text(2.1, 3.15, "start: both OFF", ha="center", fontsize=10, color=INK)
+ax.add_patch(FancyArrow(4.9, 1.5, 1.4, 0, width=0.10, color=INK))
+ax.text(5.6, 2.1, "laser\npulse", ha="center", fontsize=8.5, color=INK)
+# right: the two options at once
+_atom(7.6, 2.3, True); _atom(9.8, 2.3, False)
+_atom(7.6, 0.4, False); _atom(9.8, 0.4, True)
+ax.text(11.0, 2.3, "A ON, B OFF", fontsize=9, va="center", color=INK)
+ax.text(11.0, 0.4, "A OFF, B ON", fontsize=9, va="center", color=INK)
+ax.text(8.7, -1.0, "BOTH at the same time — that is entanglement",
+        ha="center", fontsize=10.5, color=ACCENT, fontweight="bold")
+ax.text(8.7, -1.8, "(like flipping two coins and getting HT + TH together)",
+        ha="center", fontsize=9, color=MUTED)
+ax.text(2.1, -1.4, "dashed circles: the blockade —\ncircles overlap, so BOTH ON\nis physically forbidden",
+        ha="center", fontsize=9, color=ACCENT)
+bullets(fig, [
+    "An atom is a light switch:\n|g⟩ = OFF, |r⟩ = ON.",
+    "Close atoms cannot both be ON\n(the blockade). So the pulse can\nonly put ONE excitation in —\nshared between the two atoms.",
+    "That shared, both-options-at-once\nstate IS the Bell state we're scored on.",
+], x=0.64, y=0.72, dy=0.13, fs=12.5)
+pdf.savefig(fig); plt.close(fig)
+
 # ── 3 · the baseline and the gap ─────────────────────────────────────────
 fig = new_slide("The starter pulse works at one spacing, fails at the other", "the gap")
 bullets(fig, [
@@ -207,6 +249,38 @@ bullets(fig, [
     "A two-atom collective π-pulse\nneeds area π/√2 ≈ 0.707π.",
     "The √2 collective enhancement,\non the machine's own UI, to 1%.",
 ], x=0.63, y=0.76, dy=0.095, fs=12)
+pdf.savefig(fig); plt.close(fig)
+
+# ── 11b · how the score is computed ──────────────────────────────────────
+fig = new_slide("How the score is computed — no magic", "the metric")
+fig.text(0.5, 0.70, r"F  =  |⟨Ψ⁺| ψ(T)⟩|²", fontsize=40, color=INK,
+         ha="center", fontweight="bold")
+bullets(fig, [
+    "ψ(T) — the state our pulse actually produced (4 numbers for 2 atoms; the simulator computes them exactly).",
+    "⟨Ψ⁺| … ⟩ — overlap with the perfect Bell state: 'how much of the ideal is in what we made?'",
+    "| … |² — square it to get a probability. 1.000 = perfect, 0 = nothing.",
+    "On hardware there is no ψ to peek at — so the machine takes 500 photographs and we compare the\nfour outcome percentages against the simulation. Agreement within √(p(1−p)/500) ≈ ±2% = validated.",
+], y=0.56, dy=0.095, fs=13.5)
+fig.text(0.30, 0.185, "1.000000", fontsize=42, color=GOOD, ha="center", fontweight="bold")
+fig.text(0.30, 0.125, "our best F, both spacings (simulation)", fontsize=11, color=MUTED, ha="center")
+fig.text(0.70, 0.185, "89.4%", fontsize=42, color=ACCENT, ha="center", fontweight="bold")
+fig.text(0.70, 0.125, "entangled shots on the real machine (500 photos)", fontsize=11, color=MUTED, ha="center")
+pdf.savefig(fig); plt.close(fig)
+
+# ── 11c · why it matters + the Pasqal stack ──────────────────────────────
+fig = new_slide("Why this matters beyond the score", "commercial value")
+bullets(fig, [
+    "Entangling pairs is THE primitive: every neutral-atom algorithm, sensor, or network starts here.",
+    "Our robust pulse holds F > 0.997 across a 30% spacing error — real machines misplace atoms,\nand a pulse that doesn't care means ONE calibration instead of one per geometry. That is uptime.",
+    "Our fast pulses run 6–11× shorter — less exposure to noise means more of the error budget left\nfor the actual computation. Duration is money on quantum hardware.",
+    "The whole design loop is seconds on a laptop — cheap enough to re-run at every calibration cycle.",
+], y=0.74, dy=0.105, fs=13.5)
+fig.text(0.055, 0.30, "Built on the Pasqal stack:", fontsize=13, color=INK, fontweight="bold")
+bullets(fig, [
+    "Pulser (open source) — the exact device model + the simulator the judges score with.",
+    "Pasqal Cloud free emulator — 500-shot validation of every pulse before spending hardware budget.",
+    "FRESNEL_CAN1 QPU — the real-atom runs; the portal's register/pulse/bitstring views made every\nresult inspectable by anyone (see the screenshots in this deck).",
+], y=0.255, dy=0.062, fs=12)
 pdf.savefig(fig); plt.close(fig)
 
 # ── 12 · closing numbers ─────────────────────────────────────────────────
