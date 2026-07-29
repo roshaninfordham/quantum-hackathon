@@ -75,6 +75,49 @@ Question: [physics/method question].
   never synthesize a plausible-sounding result.
 ```
 
+## Task prompt: scientist-level experiment (the full protocol)
+
+Use this when you want an *experiment*, not just an optimization run. It
+forces the pre-registration structure that makes results defensible.
+
+```text
+Experiment: [one-line question, e.g. "does the C5-optimized sweep transfer
+to larger rings without re-optimization?"].
+
+Execute this protocol IN ORDER; do not skip or reorder:
+1. HYPOTHESIS — one falsifiable sentence with a number and a comparison
+   ("P_MIS(transferred) > P_MIS(baseline) on every test graph").
+2. PREDICTION — commit expected values/ranges BEFORE running, from theory
+   or prior data. Label each: derived / extrapolated / guessed.
+3. DESIGN — independent variable, dependent variable (which scorer
+   computes it), controls (what is held fixed), and the comparison
+   baseline. State the compute budget you expect (evals, wall time).
+4. RUN — execute; show the commands and full printed output. If any run
+   deviates from the design (crash, retry, changed parameter), log it —
+   silent retries are data corruption.
+5. STATS — error bars (shot noise: sqrt(p(1-p)/N); optimizer variance:
+   restarts), and whether differences exceed them. No claim without them.
+6. VERDICT — hypothesis CONFIRMED / REFUTED / PARTIAL, one line each on
+   what would strengthen it and what its scope limits are (sizes tested,
+   assumptions used — do not extrapolate past them in the verdict).
+7. ARTIFACTS — every plot/table/json committed with the code that made it;
+   a reader must be able to regenerate all figures from the repo alone.
+Rules 1-5 from the header apply throughout. Numbers you did not compute in
+step 4 do not exist.
+```
+
+Anti-overclaim clause for scale/quantum-advantage discussions (paste into
+any prompt about "beating classical" or "massive problems"):
+
+```text
+SCOPE DISCIPLINE: instances small enough to solve exactly on a laptop are
+verification instances, not evidence of quantum advantage — say so
+explicitly. Claims about scale must be phrased as measured *transfer* or
+*scaling of the protocol's cost/quality*, never as "found something
+classical methods cannot", unless a classical-baseline comparison at that
+size was actually run in step 4.
+```
+
 ## Review checklist (run on every agent PR/output before merging)
 
 - [ ] Every number has a source (script output, file, or user input)?
