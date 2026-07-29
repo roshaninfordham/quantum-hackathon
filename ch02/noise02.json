@@ -1,0 +1,38 @@
+[
+ {
+  "graph": "star_K13",
+  "label": "baseline T=4000",
+  "noisy": 0.3804400858054716,
+  "noiseless": 0.7271351634868526
+ },
+ {
+  "graph": "star_K13",
+  "label": "GRAPE T=1000",
+  "noisy": 0.8115827621030228,
+  "noiseless": 0.9999977278359243
+ },
+ {
+  "graph": "star_K13",
+  "label": "GRAPE T=2000",
+  "noisy": 0.6696577179259788,
+  "noiseless": 0.9999857209052414
+ },
+ {
+  "graph": "cycle_C5",
+  "label": "baseline T=4000",
+  "noisy": 0.648374473616529,
+  "noiseless": 0.6570493430798144
+ },
+ {
+  "graph": "cycle_C5",
+  "label": "GRAPE T=1000",
+  "noisy": 0.9260894774926003,
+  "noiseless": 0.9999931820434091
+ },
+ {
+  "graph": "cycle_C5",
+  "label": "GRAPE T=2000",
+  "noisy": 0.8659523328597074,
+  "noiseless": 0.999998768516521
+ }
+]

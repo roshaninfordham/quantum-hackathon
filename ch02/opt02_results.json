@@ -1,0 +1,50 @@
+{
+ "star_K13_T1000": {
+  "graph": "star_K13",
+  "T_ns": 1000,
+  "internal": 0.9999977337867841,
+  "pulser": 0.9999977278359243,
+  "omega": null,
+  "delta": null
+ },
+ "star_K13_T2000": {
+  "graph": "star_K13",
+  "T_ns": 2000,
+  "internal": 0.9999830311628504,
+  "pulser": 0.9999857209052414,
+  "omega": null,
+  "delta": null
+ },
+ "star_K13_T4000": {
+  "graph": "star_K13",
+  "T_ns": 4000,
+  "internal": 0.9999856101521978,
+  "pulser": 0.9999906809953396,
+  "omega": null,
+  "delta": null
+ },
+ "cycle_C5_T1000": {
+  "graph": "cycle_C5",
+  "T_ns": 1000,
+  "internal": 0.9999970225317547,
+  "pulser": 0.9999931820434091,
+  "omega": null,
+  "delta": null
+ },
+ "cycle_C5_T2000": {
+  "graph": "cycle_C5",
+  "T_ns": 2000,
+  "internal": 0.9999983652179789,
+  "pulser": 0.999998768516521,
+  "omega": null,
+  "delta": null
+ },
+ "cycle_C5_T4000": {
+  "graph": "cycle_C5",
+  "T_ns": 4000,
+  "internal": 0.999999784361402,
+  "pulser": 0.9999972225931822,
+  "omega": null,
+  "delta": null
+ }
+}
