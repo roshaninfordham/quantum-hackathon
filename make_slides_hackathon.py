@@ -450,7 +450,7 @@ image_panel(fig, "ch03/fig_ch03_results.png", [0.04, 0.30, 0.92, 0.44],
             "x: instance size · left: the paper's ratio metric (stars = published hardware) · middle: valid-shot fraction · right: P(true optimum)")
 lines(fig, [
     "We reproduced the paper's instance class, found the baseline's geometric failure (its final detuning\nsits outside the diagonal-edge window — only 21–39% of its shots are even valid), and transferred our\n5-knob sweep from N=11: validity and true-optimum probability DOUBLE, at one third the duration.",
-    "Validated at the paper's own 500-shot count on Pasqal Cloud: measured r = 0.898 at N=11 (published\nhardware: 0.907) — plus one real-QPU instance. And when our optimizer briefly scored a perfect 1.000,\nour selftest discipline caught it gaming a scorer bug — the incident is documented, not deleted.",
+    "Validated at the paper's own 500-shot count on Pasqal Cloud: measured r = 0.898 at N=11 (published\nhardware: 0.907). On the real QPU (N=10, 500 shots): r = 0.858, 91.8% valid, a true optimum every 2nd shot.\nWhen our optimizer briefly scored a perfect 1.000, our selftests caught it gaming a scorer bug — documented.",
 ], y=0.235, dy=0.085, fs=12)
 save(fig)
 
