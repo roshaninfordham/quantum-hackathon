@@ -1,0 +1,43 @@
+{
+ "A_spam_idle": {
+  "pair_um": 13.23,
+  "runs": 250,
+  "noiseless": {
+   "00": 1.0
+  }
+ },
+ "B_spam_pi": {
+  "pair_um": 13.23,
+  "runs": 250,
+  "noiseless": {
+   "11": 0.9994,
+   "10": 0.0002,
+   "01": 0.0002,
+   "00": 0.0001
+  }
+ },
+ "C_echo": {
+  "pair_um": 5.0,
+  "runs": 500,
+  "noiseless": {
+   "11": 0.0157,
+   "00": 0.9843
+  }
+ },
+ "D_baseline_hw": {
+  "pair_um": 5.0,
+  "runs": 500,
+  "noiseless": {
+   "11": 0.0057,
+   "10": 0.4963,
+   "01": 0.4963,
+   "00": 0.0017
+  }
+ },
+ "expectations": {
+  "A_spam_idle": "P(00) \u2248 0.97-0.995 (false-ON floor 0.5-3%/atom)",
+  "B_spam_pi": "P(11) \u2248 0.80-0.92 ((1-eps)^2 with eps \u2248 4-10%)",
+  "C_echo": "coherent Bell: P(00) \u2248 0.70-0.88; incoherent mixture bound: <= 0.55",
+  "D_baseline_hw": "P_bell \u2248 0.82-0.90 (noiseless 0.9926 minus noise+SPAM)"
+ }
+}

@@ -1,0 +1,26 @@
+{
+ "A_spam_idle": {
+  "batch_id": "84294698-4bea-41f9-847f-3af9d46223e2",
+  "runs": 250,
+  "pair_um": 13.23,
+  "status": "PENDING"
+ },
+ "B_spam_pi": {
+  "batch_id": "f48a07e2-e87d-482e-9d4c-bc8a52c91e59",
+  "runs": 250,
+  "pair_um": 13.23,
+  "status": "PENDING"
+ },
+ "C_echo": {
+  "batch_id": "70ab4abc-86dc-49fe-89fc-c5b5980ad424",
+  "runs": 500,
+  "pair_um": 5.0,
+  "status": "PENDING"
+ },
+ "D_baseline_hw": {
+  "batch_id": "e40c0b34-3d23-40e3-b07f-0f4e33605b05",
+  "runs": 500,
+  "pair_um": 5.0,
+  "status": "PENDING"
+ }
+}

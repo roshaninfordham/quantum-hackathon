@@ -1,0 +1,49 @@
+{
+ "A_spam_idle": {
+  "batch_id": "84294698-4bea-41f9-847f-3af9d46223e2",
+  "runs": 250,
+  "pair_um": 13.23,
+  "status": "PENDING",
+  "counts": {
+   "00": 243,
+   "01": 4,
+   "10": 3
+  }
+ },
+ "B_spam_pi": {
+  "batch_id": "f48a07e2-e87d-482e-9d4c-bc8a52c91e59",
+  "runs": 250,
+  "pair_um": 13.23,
+  "status": "PENDING",
+  "counts": {
+   "11": 208,
+   "01": 20,
+   "10": 19,
+   "00": 3
+  }
+ },
+ "C_echo": {
+  "batch_id": "70ab4abc-86dc-49fe-89fc-c5b5980ad424",
+  "runs": 500,
+  "pair_um": 5.0,
+  "status": "PENDING",
+  "counts": {
+   "00": 476,
+   "10": 12,
+   "01": 7,
+   "11": 5
+  }
+ },
+ "D_baseline_hw": {
+  "batch_id": "e40c0b34-3d23-40e3-b07f-0f4e33605b05",
+  "runs": 500,
+  "pair_um": 5.0,
+  "status": "PENDING",
+  "counts": {
+   "10": 237,
+   "01": 227,
+   "00": 28,
+   "11": 8
+  }
+ }
+}
