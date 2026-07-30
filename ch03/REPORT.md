@@ -49,10 +49,17 @@ N = 11 instance only and transferred unchanged to N = 13 and 17.
   `d4aae9a5…` in `cloud_results_ch03.json`.
 - N = 13 on the cloud is **not possible**: EMU_FREE caps at 12 atoms
   (discovered at submission; paid tiers were out of scope).
-- Real QPU (FRESNEL_CAN1, N = 10 lattice-native instance, α = 4, 500
-  shots): batch `11553903…`, results land in `qpu_ch03_results.json`.
-  The calibrated layout is triangular, so the QPU instance is a
-  triangular unit-disk graph, not a DUGG — stated, not hidden.
+- **Real QPU (FRESNEL_CAN1, N = 10 lattice-native instance, α = 4, 500
+  shots), measured:** r_valid = **0.8584**, valid fraction **91.8%**,
+  P_MIS = **0.494** — the machine photographs a true optimum every other
+  shot, and the top counts show several *distinct* optimal solutions being
+  sampled. Batch `11553903…`, full counts in `qpu_ch03_results.json`.
+  Caveats stated: the calibrated layout is triangular, so this is a
+  triangular unit-disk instance, not a DUGG (the paper's class), and the
+  sweep was transferred from the DUGG N = 11 training with zero
+  re-optimization. The 91.8% validity (vs the baseline's 21–39% on DUGGs)
+  partly reflects friendlier geometry: the triangular class has no
+  weak diagonal edge, so our δ_f sits inside ITS window.
 
 ## The verification incident (kept on purpose)
 

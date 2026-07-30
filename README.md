@@ -16,7 +16,7 @@ criteria-to-evidence score sheet, resource ledger, and slide outline.**
 |---|---|---|---|
 | **[Challenge 01](#challenge-01--entangle-two-atoms)** — entangle 2 atoms at two spacings | ✅ complete **+ real QPU** | F: 0.9926/0.7500 → **1.000000/1.000000** | [REPORT](ch01/REPORT.md) · [docs/ch01/](docs/ch01/) |
 | **[Challenge 02](#challenge-02--encode-a-graph-solve-it)** — encode a graph, measure its MIS | ✅ complete, cloud-validated | P_MIS: 0.727/0.657 → **0.999998/0.999999** | [REPORT](ch02/REPORT.md) · [docs/ch02/](docs/ch02/) |
-| **[Challenge 03](docs/ch03/01-challenge-and-approach.md)** — beat the published curve (arXiv:2511.22967) | ✅ simulation + validation runs | valid shots 22% → **50%**, P_MIS **2×**, ⅓ duration | [REPORT](ch03/REPORT.md) · [docs/ch03/](docs/ch03/) |
+| **[Challenge 03](docs/ch03/01-challenge-and-approach.md)** — beat the published curve (arXiv:2511.22967) | ✅ sim + cloud + **real QPU** | cloud r = 0.898 @ 500 shots; QPU: r = 0.858, optimum every 2nd shot | [REPORT](ch03/REPORT.md) · [docs/ch03/](docs/ch03/) |
 
 *Every number in this repo is produced by a committed scorer, traceable to
 its source, and cross-validated in Pulser (the judge's simulator). Method
