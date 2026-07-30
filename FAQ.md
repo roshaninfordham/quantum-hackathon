@@ -22,7 +22,7 @@ Noise (decay, dephasing) accrues with time. Our noise study: a 2.7 µs pulse dro
 ## Shots & hardware
 
 **How many shots did you use?**
-500 per job — the challenge's own protocol. Totals: **6000 emulator shots** (ch01: 7×500, ch02: 5×500) and **1000 real-QPU shots** (one job per challenge).
+500 per job — the challenge's own protocol. Totals: **6500 emulator shots** and **3000 real-QPU shots** across all three stages: one scoring run per challenge, a SPAM calibration (500), a coherence-echo certification (500), and a baseline-on-hardware comparison (500).
 
 **What hardware?**
 Pasqal **FRESNEL_CAN1** (neutral-atom QPU, France), via Pasqal Cloud. Batch IDs: ch01 `a1a4d5e8…`, ch02 `653e8ab0…` — visible in our portal account.
@@ -40,6 +40,9 @@ C₆/ħ = 865 723 rad·µm⁶/µs (read from the device object at runtime, never
 
 **How is fidelity calculated?**
 Simulation: F = |⟨Ψ⁺|ψ(T)⟩|², exact overlap with the target state. Hardware: you can't see ψ — you compare the measured outcome percentages (500 photos) against the simulated ones; agreement within shot noise (±2.2%) = validated.
+
+**Is it REALLY entangled? (measured answer)**
+Yes — the coherence echo: applying the Bell pulse twice returned **95.2%** of 500 shots to '00'; an incoherent mixture is bounded near 55%. And SPAM calibration (readout loss 8.8%/excited atom) shows the earlier 0.894 corresponds to **true state quality ≈ 0.99**.
 
 **What did the real machine measure (ch01)?**
 '01' 46.4% + '10' 43.0% = **89.4% in the entangled manifold**; '11' (blockade violation) 2.4%; '00' 8.2% (readout/decay). Inside the window we published *before* the run.

@@ -137,7 +137,7 @@ fig.text(0.5, 0.575, "Entangling two atoms at the quantum speed limit, then maki
          fontsize=14.5, color=ACCENT, ha="center", linespacing=1.6)
 for x, label, val in [(0.20, "Challenge 1 fidelity", "0.75 → 1.000000"),
                       (0.50, "Challenge 2 success rate", "0.66 → 0.999999"),
-                      (0.80, "Real-atom shots", "1000, both challenges")]:
+                      (0.80, "Real-atom shots", "3000, all three stages")]:
     fig.text(x, 0.40, label, fontsize=12, color=MUTED, ha="center")
     fig.text(x, 0.33, val, fontsize=19, color=GOOD, ha="center", fontweight="bold")
 fig.text(0.5, 0.16, "Team 6 · A Real Quantum Hackathon · Microsoft Garage NYC · July 29 2026",
@@ -441,6 +441,29 @@ lines(fig, [
     "Why: THREE fragile ON atoms; per-atom\nloss ε compounds as (1−ε)³. Our window\nscaled the 2-atom result naively.",
     "Fix: a SPAM-calibration job → ≈ 0.85+.",
 ], x=0.63, y=0.78, dy=0.096, fs=10.5)
+save(fig)
+
+# === 20b - CHALLENGE 3 ====================================================
+fig = new_slide("Challenge 3 — taking on the published curve", "part three",
+                "arXiv:2511.22967 benchmarks MIS quality on neutral-atom QPUs; pasqal_fresnel: r = 0.907/0.908/0.870 at N = 11/13/17.")
+image_panel(fig, "ch03/fig_ch03_results.png", [0.04, 0.30, 0.92, 0.44],
+            "x: instance size · left: the paper's ratio metric (stars = published hardware) · middle: valid-shot fraction · right: P(true optimum)")
+lines(fig, [
+    "We reproduced the paper's instance class, found the baseline's geometric failure (its final detuning\nsits outside the diagonal-edge window — only 21–39% of its shots are even valid), and transferred our\n5-knob sweep from N=11: validity and true-optimum probability DOUBLE, at one third the duration.",
+    "Validated at the paper's own 500-shot count on Pasqal Cloud: measured r = 0.898 at N=11 (published\nhardware: 0.907) — plus one real-QPU instance. And when our optimizer briefly scored a perfect 1.000,\nour selftest discipline caught it gaming a scorer bug — the incident is documented, not deleted.",
+], y=0.235, dy=0.085, fs=12)
+save(fig)
+
+# === 20c - CLOSING CAMPAIGN ===============================================
+fig = new_slide("The closing experiments: certify, calibrate, compare", "real hardware · 1500 more shots")
+fig.text(0.5, 0.72, "95.2%", fontsize=52, color=GOOD, ha="center", fontweight="bold")
+fig.text(0.5, 0.645, "of 500 shots returned to 00 after the Bell pulse was applied TWICE —\na classical mixture is bounded near 55%. Entanglement coherence certified, global laser only.",
+         fontsize=12.5, color=INK, ha="center", linespacing=1.5)
+lines(fig, [
+    "SPAM calibration (500 shots, no-blockade pair): false-ON 1.4%/atom; excited-readout loss 8.8%/atom —\nbinomially self-consistent to one count.",
+    "That measurement REINTERPRETS our earlier runs: a perfect Bell state would read only ~0.90 here, so our\nmeasured 0.894 corrects to TRUE state quality ≈ 0.99; the star 0.684 corrects to ≈ 0.91 — in-window.",
+    "Baseline-on-hardware: 0.928 vs our 0.894 (~1.5 sigma, different calibration windows) — statistically equal\nat the easy spacing, exactly as theory predicts. The spacing that separates us cannot exist on this lattice.",
+], y=0.50, dy=0.105, fs=12.5)
 save(fig)
 
 # ═══ 21 · SCORE SHEET ════════════════════════════════════════════════════
